@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using RestSharp;
 using SumarAuto.Client.Helper;
 using System;
@@ -105,8 +105,8 @@ namespace SumarAuto.Client
                     var loginBody = new LoginRequest()
                     {
                         CompanyDB = ConfigurationManager.AppSettings["CompanyDB"],
-                        UserName = ConfigurationManager.AppSettings["UserName"], //loginData.UserName,
-                        Password = ConfigurationManager.AppSettings["Password"] //loginData.Password
+                        UserName = !string.IsNullOrEmpty(model?.UserName) ? model.UserName : ConfigurationManager.AppSettings["UserName"],
+                        Password = !string.IsNullOrEmpty(model?.Password) ? model.Password : ConfigurationManager.AppSettings["Password"]
                     };
 
                     var request = new RestRequest(Method.POST);
