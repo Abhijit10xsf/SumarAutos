@@ -1,0 +1,13 @@
+D:\SumarAuto\SumarAuto.Data\bin\Debug\SumarAuto.Data.dll
+D:\SumarAuto\SumarAuto.Data\bin\Debug\SumarAuto.Data.pdb
+D:\SumarAuto\SumarAuto.Data\obj\Debug\SumarAuto.Data.csproj.AssemblyReference.cache
+D:\SumarAuto\SumarAuto.Data\obj\Debug\SumarAuto.Data.csproj.CoreCompileInputs.cache
+D:\SumarAuto\SumarAuto.Data\obj\Debug\SumarAuto.Data.dll
+D:\SumarAuto\SumarAuto.Data\obj\Debug\SumarAuto.Data.pdb
+D:\SumarAuto\SumarAuto.Data\bin\Debug\Newtonsoft.Json.dll
+D:\SumarAuto\SumarAuto.Data\bin\Debug\Newtonsoft.Json.xml
+D:\SumarAuto\SumarAuto.Data\obj\Debug\SumarAut.D8C7DAB3.Up2Date
+D:\SumarAuto\SumarAuto.Data\bin\Debug\EntityFramework.dll
+D:\SumarAuto\SumarAuto.Data\bin\Debug\EntityFramework.SqlServer.dll
+D:\SumarAuto\SumarAuto.Data\bin\Debug\EntityFramework.xml
+D:\SumarAuto\SumarAuto.Data\bin\Debug\EntityFramework.SqlServer.xml

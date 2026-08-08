@@ -1,0 +1,455 @@
+@model SumarAuto.Client.Models.CatalogViewModel
+@{
+    ViewBag.Title = "TradeParts | Wholesale Catalog";
+    ViewBag.CurrentNav = "Catalog";
+}
+
+<!-- Search area -->
+<section class="search-hero">
+    <div class="container-fluid px-xl-4 py-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-xl-9">
+                <ul class="nav search-tabs" id="searchTabs" role="tablist">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#partSearch" type="button">Part / OE Number</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#vehicleSearch" type="button">By Vehicle</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#vinSearch" type="button">By VIN <span class="badge bg-danger ms-1">New</span></button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#oemSearch" type="button">OEM List</button></li>
+                </ul>
+
+                <div class="tab-content pt-3">
+                    <div class="tab-pane fade show active" id="partSearch">
+                        <div class="input-group input-group-lg catalog-search shadow-sm">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                            <input id="catalogSearch" type="search" class="form-control border-start-0" placeholder="Search by part number, OE number, product or brand" value="@Model.Filter.Query">
+                            <button id="searchButton" class="btn btn-danger px-4 fw-bold" type="button">Search</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="vehicleSearch">
+                        <div class="row g-2">
+                            <div class="col-md"><select class="form-select form-select-lg"><option>Make</option><option>Toyota</option><option>Nissan</option><option>Mitsubishi</option></select></div>
+                            <div class="col-md"><select class="form-select form-select-lg"><option>Model</option><option>Corolla</option><option>Patrol</option><option>Pajero</option></select></div>
+                            <div class="col-md"><select class="form-select form-select-lg"><option>Year</option><option>2026</option><option>2025</option><option>2024</option></select></div>
+                            <div class="col-md-auto"><button class="btn btn-danger btn-lg px-4 w-100 fw-bold">Find Parts</button></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="vinSearch">
+                        <div class="input-group input-group-lg shadow-sm">
+                            <input type="text" class="form-control" placeholder="Enter 17-character VIN">
+                            <button class="btn btn-danger px-4 fw-bold">Decode VIN</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="oemSearch">
+                        <div class="input-group input-group-lg shadow-sm">
+                            <input type="text" class="form-control" placeholder="Paste one or more OEM numbers">
+                            <button class="btn btn-danger px-4 fw-bold">Search OEM</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3">
+                <div class="credit-card-mini">
+                    <div>
+                        <small>Available credit</small>
+                        <div class="h5 mb-0">@Model.Stats.Currency @Model.Stats.AvailableCredit.ToString("N2")</div>
+                    </div>
+                    <i class="bi bi-wallet2"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<main class="container-fluid px-xl-4 py-4">
+    <!-- Summary cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="summary-card">
+                <div class="summary-icon bg-primary-subtle text-primary"><i class="bi bi-box-seam"></i></div>
+                <div><span>Available products</span><strong>@Model.Stats.AvailableProducts.ToString("N0")</strong></div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="summary-card">
+                <div class="summary-icon bg-success-subtle text-success"><i class="bi bi-building-check"></i></div>
+                <div><span>Ready stock</span><strong>@Model.Stats.ReadyStock.ToString("N0")</strong></div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="summary-card">
+                <div class="summary-icon bg-warning-subtle text-warning"><i class="bi bi-truck"></i></div>
+                <div><span>In transit</span><strong>@Model.Stats.InTransit.ToString("N0")</strong></div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="summary-card">
+                <div class="summary-icon bg-danger-subtle text-danger"><i class="bi bi-tags"></i></div>
+                <div><span>Special offers</span><strong>@Model.Stats.SpecialOffers.ToString("N0")</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Desktop filters -->
+        <aside class="col-xl-3 d-none d-xl-block">
+            <div class="filter-panel sticky-filter">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h2 class="h5 mb-0 fw-bold">Filters</h2>
+                    <button id="clearFilters" class="btn btn-link btn-sm text-danger p-0 fw-bold">Clear all</button>
+                </div>
+
+                <div class="filter-section">
+                    <label class="form-label fw-semibold">Category</label>
+                    <select id="categoryFilter" class="form-select">
+                        <option value="all">All categories</option>
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat" @(Model.Filter.Category == cat ? "selected" : "")>@cat</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-section">
+                    <label class="form-label fw-semibold">Brand</label>
+                    @foreach (var b in Model.Brands)
+                    {
+                        var isChecked = Model.Filter.Brands != null && Model.Filter.Brands.Contains(b);
+                        <div class="form-check">
+                            <input class="form-check-input brand-filter" type="checkbox" value="@b" id="brand_@b" @(isChecked ? "checked" : "")>
+                            <label class="form-check-label" for="brand_@b">@b</label>
+                        </div>
+                    }
+                </div>
+
+                <div class="filter-section">
+                    <label class="form-label fw-semibold">Warehouse availability</label>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="sharjahOnly" @(Model.Filter.SharjahOnly ? "checked" : "")><label class="form-check-label" for="sharjahOnly">Sharjah stock</label></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="jebelOnly" @(Model.Filter.JebelOnly ? "checked" : "")><label class="form-check-label" for="jebelOnly">Jebel Ali stock</label></div>
+                </div>
+
+                <div class="filter-section">
+                    <label class="form-label fw-semibold">Price range (AED)</label>
+                    <div class="row g-2">
+                        <div class="col"><input id="minPrice" type="number" min="0" class="form-control" placeholder="Min" value="@Model.Filter.MinPrice"></div>
+                        <div class="col"><input id="maxPrice" type="number" min="0" class="form-control" placeholder="Max" value="@Model.Filter.MaxPrice"></div>
+                    </div>
+                </div>
+
+                <div class="filter-section border-0 pb-0">
+                    <label class="form-label fw-semibold">Other options</label>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="offersOnly" @(Model.Filter.OffersOnly ? "checked" : "")><label class="form-check-label" for="offersOnly">Special offers only</label></div>
+                    <div class="form-check"><input class="form-check-input" type="checkbox" id="inStockOnly" @(Model.Filter.InStockOnly ? "checked" : "")><label class="form-check-label" for="inStockOnly">In stock only</label></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Catalog -->
+        <section class="col-xl-9">
+            <div class="catalog-toolbar mb-3">
+                <div>
+                    <div class="small text-muted">Catalog / Search results</div>
+                    <h1 class="h4 mb-0 fw-bold"><span id="resultCount">@Model.Products.Count()</span> products found</h1>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-outline-secondary d-xl-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterCanvas"><i class="bi bi-funnel"></i> Filters</button>
+                    <select id="sortSelect" class="form-select sort-select" aria-label="Sort catalog">
+                        <option value="featured" @(Model.Filter.SortBy == "featured" ? "selected" : "")>Featured</option>
+                        <option value="price-low" @(Model.Filter.SortBy == "price-low" ? "selected" : "")>Price: Low to High</option>
+                        <option value="price-high" @(Model.Filter.SortBy == "price-high" ? "selected" : "")>Price: High to Low</option>
+                        <option value="stock" @(Model.Filter.SortBy == "stock" ? "selected" : "")>Highest Stock</option>
+                    </select>
+                    <div class="btn-group" role="group" aria-label="View options">
+                        <button id="gridViewBtn" class="btn btn-outline-secondary active" title="Grid view"><i class="bi bi-grid-3x3-gap"></i></button>
+                        <button id="listViewBtn" class="btn btn-outline-secondary" title="List view"><i class="bi bi-list-ul"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="productGrid" class="row g-3">
+                @foreach (var product in Model.Products)
+                {
+                    <div class="product-col col-md-6 col-xxl-4" data-product-id="@product.Id">
+                        <article class="product-card">
+                            <div class="product-image-wrap">
+                                @if (product.IsOffer)
+                                {
+                                    <span class="offer-badge badge text-bg-danger">Special offer</span>
+                                }
+                                <button class="wishlist-btn" type="button" aria-label="Add to favorites"><i class="bi bi-heart"></i></button>
+                                <img class="product-image" src="@product.Image" alt="@product.Title">
+                            </div>
+                            <div class="product-body">
+                                <div class="product-main">
+                                    <div class="product-brand">@product.Brand</div>
+                                    <h2 class="product-title">@product.Code - @product.Title</h2>
+                                    <div class="part-number">OE: @product.Oe · EAN: @product.Ean</div>
+
+                                    <div class="stock-row">
+                                        <span class="stock-chip"><i class="bi bi-box-seam"></i><strong>@product.SharjahStock</strong> Sharjah</span>
+                                        <span class="stock-chip"><i class="bi bi-box-seam"></i><strong>@product.JebelStock</strong> Jebel Ali</span>
+                                        <span class="stock-chip"><i class="bi bi-truck"></i><strong>@product.TransitStock</strong> Transit</span>
+                                    </div>
+
+                                    <dl class="product-specs">
+                                        @foreach (var spec in product.Specs)
+                                        {
+                                            <div><dt>@spec.Key</dt><dd>@spec.Value</dd></div>
+                                        }
+                                        <div><dt>Compatibility</dt><dd>@product.Compatibility</dd></div>
+                                    </dl>
+                                </div>
+
+                                <div class="product-purchase">
+                                    <div class="price-line">
+                                        <div class="price">AED @product.Price.ToString("F2") <small>/ item</small></div>
+                                        <div class="moq">MOQ<br><strong>@product.Moq</strong></div>
+                                    </div>
+
+                                    <div class="quantity-control">
+                                        <button class="qty-minus" type="button" aria-label="Decrease quantity"><i class="bi bi-dash-lg"></i></button>
+                                        <input class="qty-input" type="number" min="@product.Moq" step="@product.Moq" value="@product.Moq" aria-label="Quantity">
+                                        <button class="qty-plus" type="button" aria-label="Increase quantity"><i class="bi bi-plus-lg"></i></button>
+                                    </div>
+                                    <button class="btn btn-danger w-100 add-cart-btn" type="button" data-product-id="@product.Id"><i class="bi bi-cart-plus me-1"></i> Add to Cart</button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+
+            <div id="emptyState" class="empty-state @(Model.Products.Any() ? "d-none" : "")">
+                <i class="bi bi-search"></i>
+                <h3>No products found</h3>
+                <p>Try another part number or clear some filters.</p>
+            </div>
+
+            <nav class="mt-4" aria-label="Catalog pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </section>
+    </div>
+</main>
+
+<!-- Mobile filters canvas -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="filterCanvas" aria-labelledby="filterCanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title fw-bold" id="filterCanvasLabel">Catalog filters</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Category</label>
+            <select id="mobileCategoryFilter" class="form-select">
+                <option value="all">All categories</option>
+                @foreach (var cat in Model.Categories)
+                {
+                    <option value="@cat">@cat</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Brand</label>
+            <select id="mobileBrandFilter" class="form-select">
+                <option value="all">All brands</option>
+                @foreach (var b in Model.Brands)
+                {
+                    <option value="@b">@b</option>
+                }
+            </select>
+        </div>
+        <button class="btn btn-danger w-100 fw-bold" data-bs-dismiss="offcanvas" id="applyMobileFilters">Apply filters</button>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    var listMode = false;
+
+    function renderProductHtml(p) {
+        var specRows = '';
+        if (p.specs) {
+            $.each(p.specs, function (k, v) {
+                specRows += '<div><dt>' + k + '</dt><dd>' + v + '</dd></div>';
+            });
+        }
+
+        return '<div class="product-col col-md-6 col-xxl-4 ' + (listMode ? 'list-mode' : '') + '" data-product-id="' + p.id + '">' +
+            '<article class="product-card">' +
+            '<div class="product-image-wrap">' +
+            (p.offer ? '<span class="offer-badge badge text-bg-danger">Special offer</span>' : '') +
+            '<button class="wishlist-btn" type="button" aria-label="Add to favorites"><i class="bi bi-heart"></i></button>' +
+            '<img class="product-image" src="' + p.image + '" alt="' + p.title + '">' +
+            '</div>' +
+            '<div class="product-body">' +
+            '<div class="product-main">' +
+            '<div class="product-brand">' + p.brand + '</div>' +
+            '<h2 class="product-title">' + p.code + ' - ' + p.title + '</h2>' +
+            '<div class="part-number">OE: ' + p.oe + ' · EAN: ' + p.ean + '</div>' +
+            '<div class="stock-row">' +
+            '<span class="stock-chip"><i class="bi bi-box-seam"></i><strong>' + p.sharjah + '</strong> Sharjah</span>' +
+            '<span class="stock-chip"><i class="bi bi-box-seam"></i><strong>' + p.jebel + '</strong> Jebel Ali</span>' +
+            '<span class="stock-chip"><i class="bi bi-truck"></i><strong>' + p.transit + '</strong> Transit</span>' +
+            '</div>' +
+            '<dl class="product-specs">' +
+            specRows +
+            '<div><dt>Compatibility</dt><dd>' + p.compatibility + '</dd></div>' +
+            '</dl>' +
+            '</div>' +
+            '<div class="product-purchase">' +
+            '<div class="price-line">' +
+            '<div class="price">AED ' + Number(p.price).toFixed(2) + ' <small>/ item</small></div>' +
+            '<div class="moq">MOQ<br><strong>' + p.moq + '</strong></div>' +
+            '</div>' +
+            '<div class="quantity-control">' +
+            '<button class="qty-minus" type="button" aria-label="Decrease quantity"><i class="bi bi-dash-lg"></i></button>' +
+            '<input class="qty-input" type="number" min="' + p.moq + '" step="' + p.moq + '" value="' + p.moq + '" aria-label="Quantity">' +
+            '<button class="qty-plus" type="button" aria-label="Increase quantity"><i class="bi bi-plus-lg"></i></button>' +
+            '</div>' +
+            '<button class="btn btn-danger w-100 add-cart-btn" type="button" data-product-id="' + p.id + '"><i class="bi bi-cart-plus me-1"></i> Add to Cart</button>' +
+            '</div>' +
+            '</div>' +
+            '</article>' +
+            '</div>';
+    }
+
+    function getFilterData() {
+        var brands = [];
+        $('.brand-filter:checked').each(function () {
+            brands.push($(this).val());
+        });
+
+        return {
+            Query: $('#catalogSearch').val(),
+            Category: $('#categoryFilter').val(),
+            Brands: brands,
+            MinPrice: $('#minPrice').val() || null,
+            MaxPrice: $('#maxPrice').val() || null,
+            SharjahOnly: $('#sharjahOnly').is(':checked'),
+            JebelOnly: $('#jebelOnly').is(':checked'),
+            OffersOnly: $('#offersOnly').is(':checked'),
+            InStockOnly: $('#inStockOnly').is(':checked'),
+            SortBy: $('#sortSelect').val()
+        };
+    }
+
+    function fetchAndRenderProducts() {
+        var filter = getFilterData();
+        $.ajax({
+            url: '@Url.Action("GetFilteredProductsJson", "Home")',
+            type: 'GET',
+            data: filter,
+            traditional: true,
+            success: function (res) {
+                $('#resultCount').text(res.count);
+                if (!res.products || res.products.length === 0) {
+                    $('#productGrid').html('');
+                    $('#emptyState').removeClass('d-none');
+                } else {
+                    $('#emptyState').addClass('d-none');
+                    var html = '';
+                    $.each(res.products, function (i, p) {
+                        html += renderProductHtml(p);
+                    });
+                    $('#productGrid').html(html);
+                    bindEvents();
+                }
+            }
+        });
+    }
+
+    function bindEvents() {
+        $('.product-col').each(function () {
+            var col = $(this);
+            var productId = col.data('product-id');
+            var qtyInput = col.find('.qty-input');
+            var moq = parseInt(qtyInput.attr('min')) || 1;
+
+            col.find('.qty-minus').off('click').on('click', function () {
+                var current = parseInt(qtyInput.val()) || moq;
+                qtyInput.val(Math.max(moq, current - moq));
+            });
+
+            col.find('.qty-plus').off('click').on('click', function () {
+                var current = parseInt(qtyInput.val()) || moq;
+                qtyInput.val(current + moq);
+            });
+
+            col.find('.add-cart-btn').off('click').on('click', function () {
+                var qty = parseInt(qtyInput.val()) || moq;
+                $.ajax({
+                    url: '@Url.Action("AddToCartJson", "Home")',
+                    type: 'POST',
+                    data: { productId: productId, quantity: qty },
+                    success: function (res) {
+                        if (res.success) {
+                            updateGlobalCartUi(res.cart);
+                            showCartToast('Item added to wholesale cart.');
+                        }
+                    }
+                });
+            });
+
+            col.find('.wishlist-btn').off('click').on('click', function () {
+                var icon = $(this).find('i');
+                icon.toggleClass('bi-heart bi-heart-fill');
+                $(this).toggleClass('text-danger');
+            });
+        });
+    }
+
+    $(document).ready(function () {
+        bindEvents();
+
+        $('#searchButton').on('click', fetchAndRenderProducts);
+        $('#catalogSearch').on('keyup', function (e) {
+            if (e.key === 'Enter') fetchAndRenderProducts();
+        });
+
+        $('#categoryFilter, #sortSelect, #sharjahOnly, #jebelOnly, #offersOnly, #inStockOnly').on('change', fetchAndRenderProducts);
+        $('.brand-filter').on('change', fetchAndRenderProducts);
+        $('#minPrice, #maxPrice').on('input', fetchAndRenderProducts);
+
+        $('#clearFilters').on('click', function () {
+            $('#catalogSearch').val('');
+            $('#categoryFilter').val('all');
+            $('.brand-filter').prop('checked', false);
+            $('#sharjahOnly, #jebelOnly, #offersOnly, #inStockOnly').prop('checked', false);
+            $('#minPrice, #maxPrice').val('');
+            $('#sortSelect').val('featured');
+            fetchAndRenderProducts();
+        });
+
+        $('#gridViewBtn').on('click', function () {
+            listMode = false;
+            $(this).addClass('active');
+            $('#listViewBtn').removeClass('active');
+            $('.product-col').removeClass('list-mode');
+        });
+
+        $('#listViewBtn').on('click', function () {
+            listMode = true;
+            $(this).addClass('active');
+            $('#gridViewBtn').removeClass('active');
+            $('.product-col').addClass('list-mode');
+        });
+
+        $('#applyMobileFilters').on('click', function () {
+            var cat = $('#mobileCategoryFilter').val();
+            $('#categoryFilter').val(cat);
+            var brand = $('#mobileBrandFilter').val();
+            $('.brand-filter').prop('checked', false);
+            if (brand !== 'all') {
+                $('#brand_' + brand).prop('checked', true);
+            }
+            fetchAndRenderProducts();
+        });
+    });
+</script>
+}

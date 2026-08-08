@@ -1,0 +1,254 @@
+@model SumarAuto.Data.Entities.CartSummary
+@{
+    ViewBag.Title = "Your Wholesale Cart";
+    ViewBag.CurrentNav = "Cart";
+    var stats = ViewBag.Stats as SumarAuto.Data.Entities.SummaryStats;
+    var user = ViewBag.CurrentUser as SumarAuto.Data.Entities.User;
+}
+
+<section class="search-hero py-4">
+    <div class="container-fluid px-xl-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-danger">Catalog</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Cart</li>
+                    </ol>
+                </nav>
+                <h1 class="h3 mb-0 fw-bold">Wholesale Cart & Order Review</h1>
+            </div>
+            <div class="credit-card-mini" style="min-width: 260px;">
+                <div>
+                    <small>Available B2B credit</small>
+                    <div class="h5 mb-0">AED @(user != null ? user.AvailableCredit.ToString("N2") : stats.AvailableCredit.ToString("N2"))</div>
+                </div>
+                <i class="bi bi-wallet2"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<main class="container-fluid px-xl-4 py-4">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4">
+            <div class="card-body">
+                <i class="bi bi-cart3 display-1 text-muted mb-3 d-block"></i>
+                <h2 class="h4 fw-bold">Your wholesale cart is empty</h2>
+                <p class="text-muted max-w-md mx-auto mb-4">Browse our extensive inventory of automotive OEM and aftermarket spare parts to start your wholesale order.</p>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-danger btn-lg px-4 fw-bold">
+                    <i class="bi bi-grid me-2"></i> Explore Catalog
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <!-- Cart Items Section -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h2 class="h5 mb-0 fw-bold"><i class="bi bi-basket me-2 text-danger"></i> Order Items (@Model.TotalItemsCount)</h2>
+                        @using (Html.BeginForm("ClearCart", "Cart", FormMethod.Post, new { id = "clearCartForm" }))
+                        {
+                            <button type="submit" class="btn btn-outline-secondary btn-sm rounded-3"><i class="bi bi-trash me-1"></i> Clear Cart</button>
+                        }
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="ps-4">Product Details</th>
+                                        <th scope="col" class="text-center">MOQ</th>
+                                        <th scope="col">Unit Price</th>
+                                        <th scope="col" class="text-center">Quantity</th>
+                                        <th scope="col" class="text-end pe-4">Subtotal</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Items)
+                                    {
+                                        <tr>
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <img src="@item.Product.Image" alt="@item.Product.Title" class="rounded-3 border p-1" style="width: 64px; height: 64px; object-fit: contain; background: #f8f9fa;">
+                                                    <div>
+                                                        <span class="badge bg-danger-subtle text-danger fw-bold small">@item.Product.Brand</span>
+                                                        <div class="fw-bold text-dark mt-1">@item.Product.Code - @item.Product.Title</div>
+                                                        <div class="small text-muted">OE: @item.Product.Oe · EAN: @item.Product.Ean</div>
+                                                        <div class="small text-muted mt-1">
+                                                            <i class="bi bi-box-seam me-1 text-primary"></i>Sharjah: <strong>@item.Product.SharjahStock</strong> |
+                                                            <i class="bi bi-box-seam me-1 text-success"></i>Jebel: <strong>@item.Product.JebelStock</strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center fw-semibold">@item.Product.Moq</td>
+                                            <td class="fw-bold text-dark">AED @item.Product.Price.ToString("F2")</td>
+                                            <td class="text-center" style="width: 150px;">
+                                                @using (Html.BeginForm("UpdateQuantity", "Cart", FormMethod.Post, new { @class = "cart-qty-form" }))
+                                                {
+                                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                                    <div class="quantity-control mx-auto" style="max-width: 120px;">
+                                                        <button type="button" class="btn-minus"><i class="bi bi-dash-lg"></i></button>
+                                                        <input type="number" name="quantity" class="qty-field" value="@item.Quantity" min="@item.Product.Moq" step="@item.Product.Moq" onchange="this.form.submit()" />
+                                                        <button type="button" class="btn-plus"><i class="bi bi-plus-lg"></i></button>
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td class="text-end pe-4 fw-bold fs-6 text-danger">AED @item.ItemTotal.ToString("F2")</td>
+                                            <td class="pe-3">
+                                                @using (Html.BeginForm("RemoveFromCart", "Cart", FormMethod.Post))
+                                                {
+                                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                                    <button type="submit" class="btn btn-sm btn-link text-muted p-0" title="Remove"><i class="bi bi-x-circle fs-5 hover-danger"></i></button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white py-3 d-flex justify-content-between align-items-center">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary font-weight-bold">
+                            <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+                        </a>
+                        <span class="text-muted small">All prices are exclusive of 5% UAE VAT</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Checkout & Summary Sidebar -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-dark text-white py-3 rounded-top-4">
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-file-earmark-text me-2"></i> B2B Order Summary</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal (@Model.TotalItemsCount items)</span>
+                            <strong class="text-dark">AED @Model.Subtotal.ToString("F2")</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">VAT Standard Rate (5%)</span>
+                            <strong class="text-dark">AED @Model.Vat.ToString("F2")</strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="h5 mb-0 fw-bold text-dark">Total Order Value</span>
+                            <span class="h4 mb-0 fw-bold text-danger">AED @Model.GrandTotal.ToString("F2")</span>
+                        </div>
+
+                        <a href="@Url.Action("Checkout", "Cart")" class="btn btn-danger btn-lg w-100 py-3 fw-bold rounded-3 shadow mb-3">
+                            <i class="bi bi-arrow-right-circle me-2"></i> Proceed to B2B Checkout
+                        </a>
+
+                        <div class="accordion mb-3" id="quickCheckoutAccordion">
+                            <div class="accordion-item border rounded-3 overflow-hidden">
+                                <h2 class="accordion-header" id="headingQuick">
+                                    <button class="accordion-button collapsed py-2 small fw-semibold bg-light text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuick" aria-expanded="false" aria-controls="collapseQuick">
+                                        <i class="bi bi-lightning-charge text-warning me-2"></i> Express One-Click Order
+                                    </button>
+                                </h2>
+                                <div id="collapseQuick" class="accordion-collapse collapse" aria-labelledby="headingQuick" data-bs-parent="#quickCheckoutAccordion">
+                                    <div class="accordion-body p-3">
+                                        @using (Html.BeginForm("Checkout", "Cart", FormMethod.Post))
+                                        {
+                                            <div class="mb-2">
+                                                <label class="form-label small fw-semibold">Fulfillment Warehouse</label>
+                                                <select name="shippingMethod" class="form-select form-select-sm rounded-2">
+                                                    <option value="Sharjah Warehouse">Sharjah Main Warehouse Pickup</option>
+                                                    <option value="Jebel Ali Freezone">Jebel Ali Logistics Hub</option>
+                                                    <option value="Express Delivery">Dubai Express (+AED 150)</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-2">
+                                                <label class="form-label small fw-semibold">Payment Method</label>
+                                                <select name="paymentTerms" class="form-select form-select-sm rounded-2">
+                                                    <option value="B2B Credit Line">B2B Credit Line (30 Days)</option>
+                                                    <option value="Bank Wire">Corporate Bank Wire</option>
+                                                    <option value="Cash on Delivery">Cash / Pickup</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-semibold">PO Number / Instructions</label>
+                                                <textarea name="notes" class="form-control form-control-sm rounded-2" rows="2" placeholder="Optional PO reference..."></textarea>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-outline-danger btn-sm w-100 fw-bold py-2">
+                                                <i class="bi bi-check2-circle me-1"></i> Quick Submit Order
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- B2B Account Benefits Info Card -->
+                <div class="card border-0 shadow-sm rounded-4 bg-light">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <div class="bg-danger text-white rounded-3 p-2 d-grid place-items-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-shield-check fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Verified Wholesale Partner</h6>
+                                <small class="text-muted">Account: @(user != null ? user.AccountId : "B2B-10948")</small>
+                            </div>
+                        </div>
+                        <ul class="list-unstyled small text-muted mb-0 mt-3 d-flex flex-column gap-2">
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Guaranteed OEM original part numbers</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Tax Invoice with TRN: 100293847500003</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Fast dispatch from Sharjah & Jebel Ali</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</main>
+
+@section Scripts {
+<script>
+    $(document).ready(function () {
+        $('.btn-minus').on('click', function () {
+            var form = $(this).closest('form');
+            var input = form.find('.qty-field');
+            var min = parseInt(input.attr('min')) || 1;
+            var step = parseInt(input.attr('step')) || 1;
+            var val = parseInt(input.val()) || min;
+            if (val > min) {
+                input.val(val - step);
+                form.submit();
+            }
+        });
+
+        $('.btn-plus').on('click', function () {
+            var form = $(this).closest('form');
+            var input = form.find('.qty-field');
+            var min = parseInt(input.attr('min')) || 1;
+            var step = parseInt(input.attr('step')) || 1;
+            var val = parseInt(input.val()) || min;
+            input.val(val + step);
+            form.submit();
+        });
+    });
+</script>
+}

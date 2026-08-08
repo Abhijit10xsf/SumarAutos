@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Responsive wholesale automotive parts catalog template">
+  <title>TradeParts | Wholesale Catalog</title>
+
+  <!-- Free and open-source UI libraries -->
+  <link href="assets/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/app.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Top utility bar -->
+  <div class="utility-bar d-none d-lg-block">
+    <div class="container-fluid px-xl-4">
+      <div class="d-flex justify-content-between align-items-center py-2">
+        <div class="small text-white-50">
+          <span class="me-3"><i class="bi bi-headset me-1"></i> Sales support: +971 4 555 0198</span>
+          <span><i class="bi bi-envelope me-1"></i> wholesale@tradeparts.example</span>
+        </div>
+        <div class="small d-flex gap-3">
+          <a href="#" class="utility-link"><i class="bi bi-truck me-1"></i> Track shipment</a>
+          <a href="#" class="utility-link"><i class="bi bi-question-circle me-1"></i> Help</a>
+          <a href="#" class="utility-link"><i class="bi bi-globe2 me-1"></i> EN</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main navigation -->
+  <nav class="navbar navbar-expand-xl navbar-dark main-navbar sticky-top">
+    <div class="container-fluid px-xl-4">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <span class="brand-mark">T</span>
+        <span class="fw-bold">TradeParts</span>
+        <span class="badge text-bg-danger rounded-pill d-none d-sm-inline">B2B</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav me-auto mb-2 mb-xl-0">
+          <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-grid me-1"></i> Catalog</a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-receipt me-1"></i> Orders</a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-arrow-left-right me-1"></i> Claims</a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-truck me-1"></i> In Transit</a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-download me-1"></i> Downloads</a></li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2 nav-actions">
+          <button class="btn btn-outline-light position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartCanvas" aria-controls="cartCanvas">
+            <i class="bi bi-cart3"></i>
+            <span class="d-none d-md-inline ms-1">Cart</span>
+            <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+          </button>
+          <button class="btn btn-light account-btn" type="button">
+            <span class="avatar">AK</span>
+            <span class="d-none d-md-inline text-start ms-2">
+              <small class="d-block text-muted lh-1">Welcome</small>
+              <strong class="small">Al Khaleej Auto</strong>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Search area -->
+  <section class="search-hero">
+    <div class="container-fluid px-xl-4 py-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-xl-9">
+          <ul class="nav search-tabs" id="searchTabs" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#partSearch" type="button">Part / OE Number</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#vehicleSearch" type="button">By Vehicle</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#vinSearch" type="button">By VIN <span class="badge bg-danger ms-1">New</span></button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#oemSearch" type="button">OEM List</button></li>
+          </ul>
+
+          <div class="tab-content pt-3">
+            <div class="tab-pane fade show active" id="partSearch">
+              <div class="input-group input-group-lg catalog-search shadow-sm">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                <input id="catalogSearch" type="search" class="form-control border-start-0" placeholder="Search by part number, OE number, product or brand">
+                <button id="searchButton" class="btn btn-danger px-4" type="button">Search</button>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="vehicleSearch">
+              <div class="row g-2">
+                <div class="col-md"><select class="form-select form-select-lg"><option>Make</option><option>Toyota</option><option>Nissan</option><option>Mitsubishi</option></select></div>
+                <div class="col-md"><select class="form-select form-select-lg"><option>Model</option><option>Corolla</option><option>Patrol</option><option>Pajero</option></select></div>
+                <div class="col-md"><select class="form-select form-select-lg"><option>Year</option><option>2026</option><option>2025</option><option>2024</option></select></div>
+                <div class="col-md-auto"><button class="btn btn-danger btn-lg px-4 w-100">Find Parts</button></div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="vinSearch">
+              <div class="input-group input-group-lg shadow-sm">
+                <input type="text" class="form-control" placeholder="Enter 17-character VIN">
+                <button class="btn btn-danger px-4">Decode VIN</button>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="oemSearch">
+              <div class="input-group input-group-lg shadow-sm">
+                <input type="text" class="form-control" placeholder="Paste one or more OEM numbers">
+                <button class="btn btn-danger px-4">Search OEM</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3">
+          <div class="credit-card-mini">
+            <div>
+              <small>Available credit</small>
+              <div class="h5 mb-0">AED 86,420.00</div>
+            </div>
+            <i class="bi bi-wallet2"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container-fluid px-xl-4 py-4">
+    <!-- Summary cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="summary-card">
+          <div class="summary-icon bg-primary-subtle text-primary"><i class="bi bi-box-seam"></i></div>
+          <div><span>Available products</span><strong>18,787</strong></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="summary-card">
+          <div class="summary-icon bg-success-subtle text-success"><i class="bi bi-building-check"></i></div>
+          <div><span>Ready stock</span><strong>12,430</strong></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="summary-card">
+          <div class="summary-icon bg-warning-subtle text-warning"><i class="bi bi-truck"></i></div>
+          <div><span>In transit</span><strong>2,186</strong></div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="summary-card">
+          <div class="summary-icon bg-danger-subtle text-danger"><i class="bi bi-tags"></i></div>
+          <div><span>Special offers</span><strong>326</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Desktop filters -->
+      <aside class="col-xl-3 d-none d-xl-block">
+        <div class="filter-panel sticky-filter">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h5 mb-0">Filters</h2>
+            <button id="clearFilters" class="btn btn-link btn-sm text-danger p-0">Clear all</button>
+          </div>
+
+          <div class="filter-section">
+            <label class="form-label fw-semibold">Category</label>
+            <select id="categoryFilter" class="form-select">
+              <option value="all">All categories</option>
+              <option value="Engine">Engine Parts</option>
+              <option value="Brake">Brake System</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Suspension">Suspension</option>
+              <option value="Filters">Filters</option>
+            </select>
+          </div>
+
+          <div class="filter-section">
+            <label class="form-label fw-semibold">Brand</label>
+            <div class="form-check"><input class="form-check-input brand-filter" type="checkbox" value="FEBEST" id="brand1"><label class="form-check-label" for="brand1">FEBEST</label></div>
+            <div class="form-check"><input class="form-check-input brand-filter" type="checkbox" value="BOSCH" id="brand2"><label class="form-check-label" for="brand2">BOSCH</label></div>
+            <div class="form-check"><input class="form-check-input brand-filter" type="checkbox" value="NGK" id="brand3"><label class="form-check-label" for="brand3">NGK</label></div>
+            <div class="form-check"><input class="form-check-input brand-filter" type="checkbox" value="SKF" id="brand4"><label class="form-check-label" for="brand4">SKF</label></div>
+          </div>
+
+          <div class="filter-section">
+            <label class="form-label fw-semibold">Warehouse availability</label>
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="sharjahOnly"><label class="form-check-label" for="sharjahOnly">Sharjah stock</label></div>
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="jebelOnly"><label class="form-check-label" for="jebelOnly">Jebel Ali stock</label></div>
+          </div>
+
+          <div class="filter-section">
+            <label class="form-label fw-semibold">Price range (AED)</label>
+            <div class="row g-2">
+              <div class="col"><input id="minPrice" type="number" min="0" class="form-control" placeholder="Min"></div>
+              <div class="col"><input id="maxPrice" type="number" min="0" class="form-control" placeholder="Max"></div>
+            </div>
+          </div>
+
+          <div class="filter-section border-0 pb-0">
+            <label class="form-label fw-semibold">Other options</label>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="offersOnly"><label class="form-check-label" for="offersOnly">Special offers only</label></div>
+            <div class="form-check"><input class="form-check-input" type="checkbox" id="inStockOnly"><label class="form-check-label" for="inStockOnly">In stock only</label></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Catalog -->
+      <section class="col-xl-9">
+        <div class="catalog-toolbar mb-3">
+          <div>
+            <div class="small text-muted">Catalog / Search results</div>
+            <h1 class="h4 mb-0"><span id="resultCount">6</span> products found</h1>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-secondary d-xl-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterCanvas"><i class="bi bi-funnel"></i> Filters</button>
+            <select id="sortSelect" class="form-select sort-select" aria-label="Sort catalog">
+              <option value="featured">Featured</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="stock">Highest Stock</option>
+            </select>
+            <div class="btn-group" role="group" aria-label="View options">
+              <button id="gridViewBtn" class="btn btn-outline-secondary active" title="Grid view"><i class="bi bi-grid-3x3-gap"></i></button>
+              <button id="listViewBtn" class="btn btn-outline-secondary" title="List view"><i class="bi bi-list-ul"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div id="productGrid" class="row g-3"></div>
+
+        <div id="emptyState" class="empty-state d-none">
+          <i class="bi bi-search"></i>
+          <h3>No products found</h3>
+          <p>Try another part number or clear some filters.</p>
+        </div>
+
+        <nav class="mt-4" aria-label="Catalog pagination">
+          <ul class="pagination justify-content-center">
+            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </nav>
+      </section>
+    </div>
+  </main>
+
+  <!-- Mobile filters -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="filterCanvas" aria-labelledby="filterCanvasLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="filterCanvasLabel">Catalog filters</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <p class="text-muted">Use the desktop filter panel as the data source. This mobile panel can be connected to the same controls in your application.</p>
+      <div class="mb-3"><label class="form-label">Category</label><select class="form-select"><option>All categories</option><option>Engine Parts</option><option>Brake System</option><option>Electrical</option></select></div>
+      <div class="mb-3"><label class="form-label">Brand</label><select class="form-select"><option>All brands</option><option>FEBEST</option><option>BOSCH</option><option>NGK</option></select></div>
+      <button class="btn btn-danger w-100" data-bs-dismiss="offcanvas">Apply filters</button>
+    </div>
+  </div>
+
+  <!-- Cart -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartCanvas" aria-labelledby="cartCanvasLabel">
+    <div class="offcanvas-header border-bottom">
+      <div>
+        <h5 class="offcanvas-title" id="cartCanvasLabel">Your wholesale cart</h5>
+        <small class="text-muted">Prices exclude VAT</small>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+      <div id="cartItems" class="cart-items flex-grow-1"></div>
+      <div class="cart-summary border-top pt-3">
+        <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><strong id="cartSubtotal">AED 0.00</strong></div>
+        <div class="d-flex justify-content-between mb-3 text-muted"><span>VAT (5%)</span><span id="cartVat">AED 0.00</span></div>
+        <div class="d-flex justify-content-between h5"><span>Total</span><strong id="cartTotal">AED 0.00</strong></div>
+        <button class="btn btn-danger btn-lg w-100 mt-3">Proceed to checkout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="cartToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <i class="bi bi-check-circle-fill text-success me-2"></i>
+        <strong class="me-auto">Cart updated</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">Item added to your wholesale cart.</div>
+    </div>
+  </div>
+
+  <footer class="site-footer mt-5">
+    <div class="container-fluid px-xl-4 py-4">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-6">
+          <strong>TradeParts Wholesale</strong>
+          <div class="small text-white-50">Responsive catalog template built with Bootstrap 5 and Bootstrap Icons.</div>
+        </div>
+        <div class="col-md-6 text-md-end small text-white-50">© 2026 TradeParts. Demo interface.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/vendor/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

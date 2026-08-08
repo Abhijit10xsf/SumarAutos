@@ -1,0 +1,190 @@
+@{
+    ViewBag.Title = "TradeParts | B2B Portal Sign In & Registration";
+}
+
+<main class="container-fluid px-xl-4 py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="row g-0">
+                    <!-- Left Hero / Promo Side -->
+                    <div class="col-md-5 bg-dark text-white p-4 p-md-5 d-flex flex-column justify-content-between" style="background: linear-gradient(135deg, #161b22 0%, #24282d 100%);">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-4">
+                                <span class="brand-mark" style="width: 42px; height: 42px; font-size: 1.2rem;">T</span>
+                                <span class="h4 mb-0 fw-bold text-white">TradeParts</span>
+                                <span class="badge text-bg-danger rounded-pill">B2B</span>
+                            </div>
+                            <h2 class="h3 fw-bold mb-3">Wholesale Auto Parts Portal</h2>
+                            <p class="text-white-50 small mb-4">Access real-time stock levels across Sharjah & Jebel Ali warehouses, exclusive wholesale pricing, and instant PO placement.</p>
+                            
+                            <div class="d-flex flex-column gap-3 mb-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="bg-danger text-white rounded-3 p-2 d-grid place-items-center" style="width: 38px; height: 38px;">
+                                        <i class="bi bi-box-seam fs-6"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="d-block small text-white">18,000+ Active SKUs</strong>
+                                        <small class="text-white-50">OEM & Aftermarket stock</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="bg-danger text-white rounded-3 p-2 d-grid place-items-center" style="width: 38px; height: 38px;">
+                                        <i class="bi bi-wallet2 fs-6"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="d-block small text-white">B2B Credit Facility</strong>
+                                        <small class="text-white-50">Up to AED 125,000 credit</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="bg-danger text-white rounded-3 p-2 d-grid place-items-center" style="width: 38px; height: 38px;">
+                                        <i class="bi bi-truck fs-6"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="d-block small text-white">Same-Day UAE Dispatch</strong>
+                                        <small class="text-white-50">Sharjah & Dubai delivery</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Demo credentials helper -->
+                        <div class="bg-white bg-opacity-10 rounded-3 p-3 text-white-50 small border border-white border-opacity-10">
+                            <strong class="text-white d-block mb-1"><i class="bi bi-info-circle text-warning me-1"></i> Demo Credentials:</strong>
+                            Email: <span class="text-white fw-bold">wholesale@alkhaleejauto.ae</span><br>
+                            Password: <span class="text-white fw-bold">Password123!</span>
+                        </div>
+                    </div>
+
+                    <!-- Right Form Side -->
+                    <div class="col-md-7 bg-white p-4 p-md-5">
+                        <ul class="nav nav-pills search-tabs mb-4 border-bottom pb-2" id="authTabs" role="tablist">
+                            <li class="nav-item flex-grow-1 text-center" role="presentation">
+                                <button class="nav-link active w-100 fw-bold py-2" id="login-tab" data-bs-toggle="tab" data-bs-target="#loginPane" type="button" role="tab">Sign In</button>
+                            </li>
+                            <li class="nav-item flex-grow-1 text-center" role="presentation">
+                                <button class="nav-link w-100 fw-bold py-2" id="register-tab" data-bs-toggle="tab" data-bs-target="#registerPane" type="button" role="tab">Register Account</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="authTabContent">
+                            <!-- Sign In Tab -->
+                            <div class="tab-pane fade show active" id="loginPane" role="tabpanel">
+                                <h3 class="h4 fw-bold mb-1">Welcome Back</h3>
+                                <p class="text-muted small mb-4">Please enter your B2B account email or Account ID.</p>
+
+                                @if (ViewBag.ErrorMessage != null)
+                                {
+                                    <div class="alert alert-danger alert-dismissible fade show mb-4 small" role="alert">
+                                        <i class="bi bi-exclamation-circle-fill me-2"></i> @ViewBag.ErrorMessage
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                }
+
+                                @using (Html.BeginForm("Login", "Account", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Email or B2B Account ID</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="bi bi-envelope text-muted"></i></span>
+                                            <input type="text" name="emailOrAccount" class="form-control" placeholder="wholesale@alkhaleejauto.ae or B2B-10948" value="wholesale@alkhaleejauto.ae" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="form-label fw-semibold">Password</label>
+                                            <a href="#" class="small text-danger">Forgot password?</a>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="bi bi-lock text-muted"></i></span>
+                                            <input type="password" name="password" class="form-control" placeholder="••••••••" value="Password123!" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-check mb-4">
+                                        <input class="form-check-input" type="checkbox" name="rememberMe" value="true" id="rememberMe" checked>
+                                        <label class="form-check-label small text-muted" for="rememberMe">Remember this browser</label>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-danger btn-lg w-100 py-3 fw-bold rounded-3 shadow">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i> Sign In to Account
+                                    </button>
+                                }
+                            </div>
+
+                            <!-- Quick Register Tab -->
+                            <div class="tab-pane fade" id="registerPane" role="tabpanel">
+                                <h3 class="h4 fw-bold mb-1">New B2B Account</h3>
+                                <p class="text-muted small mb-4">Register your company for wholesale catalog prices and credit terms.</p>
+
+                                @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold">Company Name *</label>
+                                            <input type="text" name="CompanyName" class="form-control" placeholder="e.g. Al Khaleej Auto Parts LLC" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Contact Person *</label>
+                                            <input type="text" name="ContactPerson" class="form-control" placeholder="Full name" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Mobile Phone *</label>
+                                            <input type="text" name="Phone" class="form-control" placeholder="+971 50 000 0000" required>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold">Work Email Address *</label>
+                                            <input type="email" name="Email" class="form-control" placeholder="orders@company.ae" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">TRN Number (VAT)</label>
+                                            <input type="text" name="TrnNumber" class="form-control" placeholder="100XXXXXXXXXXXX">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Trade License No.</label>
+                                            <input type="text" name="TradeLicenseNumber" class="form-control" placeholder="CN-123456">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Password *</label>
+                                            <input type="password" name="Password" class="form-control" placeholder="••••••••" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">Confirm Password *</label>
+                                            <input type="password" name="confirmPassword" class="form-control" placeholder="••••••••" required>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="terms" required checked>
+                                                <label class="form-check-label small text-muted" for="terms">
+                                                    I agree to TradeParts B2B Terms of Wholesale & Privacy Policy.
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 mt-4">
+                                            <button type="submit" class="btn btn-danger btn-lg w-100 py-3 fw-bold rounded-3 shadow">
+                                                <i class="bi bi-person-plus-fill me-2"></i> Register Wholesale Account
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,222 @@
+@model SumarAuto.Data.Entities.CartSummary
+@{
+    ViewBag.Title = "B2B Checkout & Order Review | TradeParts Wholesale";
+    ViewBag.CurrentNav = "Cart";
+    var stats = ViewBag.Stats as SumarAuto.Data.Entities.SummaryStats;
+    var user = ViewBag.CurrentUser as SumarAuto.Data.Entities.User;
+}
+
+<section class="search-hero py-4">
+    <div class="container-fluid px-xl-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-danger">Catalog</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Cart")" class="text-danger">Cart</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                    </ol>
+                </nav>
+                <h1 class="h3 mb-0 fw-bold">B2B Wholesale Checkout</h1>
+            </div>
+            <div class="credit-card-mini" style="min-width: 260px;">
+                <div>
+                    <small>Available B2B Credit Line</small>
+                    <div class="h5 mb-0">AED @(user != null ? user.AvailableCredit.ToString("N2") : "50,000.00")</div>
+                </div>
+                <i class="bi bi-shield-check"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<main class="container-fluid px-xl-4 py-4">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @using (Html.BeginForm("Checkout", "Cart", FormMethod.Post, new { id = "checkoutForm" }))
+    {
+        <div class="row g-4">
+            <!-- Left Column: Checkout Options -->
+            <div class="col-lg-7 col-xl-8">
+                <!-- Company & Account Details -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+                        <h2 class="h5 mb-0 fw-bold text-dark"><i class="bi bi-building me-2 text-danger"></i> 1. Buyer Account Details</h2>
+                        <span class="badge bg-success-subtle text-success fw-bold px-3 py-2 rounded-pill"><i class="bi bi-check-circle me-1"></i> Verified Dealer</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Company Name</label>
+                                <strong class="fs-6 text-dark">@(user != null ? user.CompanyName : "Al Khaleej Auto Parts LLC")</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Account ID & TRN</label>
+                                <strong class="fs-6 text-dark">@(user != null ? user.AccountId : "B2B-10948") - TRN: @(user != null && !string.IsNullOrEmpty(user.TrnNumber) ? user.TrnNumber : "100293847500003")</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Authorized Contact</label>
+                                <span class="text-dark">@(user != null ? user.ContactPerson : "Warehouse Manager") (@(user != null ? user.Email : "orders@alkhaleejauto.ae"))</span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small d-block">Phone / Mobile</label>
+                                <span class="text-dark">@(user != null ? user.Phone : "+971 50 123 4567")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fulfillment / Shipping Method -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h2 class="h5 mb-0 fw-bold text-dark"><i class="bi bi-truck me-2 text-danger"></i> 2. Fulfillment & Warehouse Dispatch</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="form-check custom-option-card h-100 p-3 border rounded-3 bg-light">
+                                    <input class="form-check-input me-2" type="radio" name="shippingMethod" id="shipSharjah" value="Sharjah Warehouse" checked>
+                                    <label class="form-check-label w-100" for="shipSharjah">
+                                        <strong class="d-block text-dark">Sharjah Warehouse</strong>
+                                        <small class="text-muted d-block">Self pickup / Counter collection (Free)</small>
+                                        <span class="badge bg-primary-subtle text-primary mt-2">Ready in 2 Hours</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check custom-option-card h-100 p-3 border rounded-3 bg-light">
+                                    <input class="form-check-input me-2" type="radio" name="shippingMethod" id="shipJebel" value="Jebel Ali Freezone">
+                                    <label class="form-check-label w-100" for="shipJebel">
+                                        <strong class="d-block text-dark">Jebel Ali Hub</strong>
+                                        <small class="text-muted d-block">Freezone logistics collection</small>
+                                        <span class="badge bg-info-subtle text-info mt-2">Same Day Collection</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check custom-option-card h-100 p-3 border rounded-3 bg-light">
+                                    <input class="form-check-input me-2" type="radio" name="shippingMethod" id="shipExpress" value="Express Delivery">
+                                    <label class="form-check-label w-100" for="shipExpress">
+                                        <strong class="d-block text-dark">UAE Express Delivery</strong>
+                                        <small class="text-muted d-block">Direct door delivery (+AED 150)</small>
+                                        <span class="badge bg-success-subtle text-success mt-2">Same-Day Courier</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Selection -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h2 class="h5 mb-0 fw-bold text-dark"><i class="bi bi-wallet2 me-2 text-danger"></i> 3. Payment Method & Terms</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="form-check custom-option-card h-100 p-3 border rounded-3 bg-light">
+                                    <input class="form-check-input me-2" type="radio" name="paymentTerms" id="payCredit" value="B2B Credit Line" checked>
+                                    <label class="form-check-label w-100" for="payCredit">
+                                        <strong class="d-block text-dark">B2B Credit Facility</strong>
+                                        <small class="text-muted d-block">Net 30 Days Invoice</small>
+                                        <span class="badge bg-danger-subtle text-danger mt-2">Approved Limit Available</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check custom-option-card h-100 p-3 border rounded-3 bg-light">
+                                    <input class="form-check-input me-2" type="radio" name="paymentTerms" id="payWire" value="Bank Wire">
+                                    <label class="form-check-label w-100" for="payWire">
+                                        <strong class="d-block text-dark">Corporate Bank Wire</strong>
+                                        <small class="text-muted d-block">Direct TT / Bank Transfer</small>
+                                        <span class="badge bg-secondary-subtle text-secondary mt-2">Proforma Provided</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check custom-option-card h-100 p-3 border rounded-3 bg-light">
+                                    <input class="form-check-input me-2" type="radio" name="paymentTerms" id="payCod" value="Cash on Delivery">
+                                    <label class="form-check-label w-100" for="payCod">
+                                        <strong class="d-block text-dark">Cash / Cheque on Pickup</strong>
+                                        <small class="text-muted d-block">Pay upon receipt</small>
+                                        <span class="badge bg-warning-subtle text-dark mt-2">Collection Counter</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purchase Order Notes -->
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h2 class="h5 mb-0 fw-bold text-dark"><i class="bi bi-pencil-square me-2 text-danger"></i> 4. Purchase Order Reference & Instructions</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Internal PO Number / Remarks</label>
+                            <input type="text" name="notes" class="form-control form-control-lg rounded-3" placeholder="e.g. PO-2026-0807 / Urgent Delivery to Sharjah Branch" />
+                            <small class="text-muted mt-1 d-block">This PO reference will appear on your official tax invoice.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Items & Summary -->
+            <div class="col-lg-5 col-xl-4">
+                <div class="card border-0 shadow-sm rounded-4 mb-4 sticky-top" style="top: 90px;">
+                    <div class="card-header bg-dark text-white py-3 rounded-top-4">
+                        <h3 class="h5 mb-0 fw-bold"><i class="bi bi-receipt me-2"></i> Order Summary</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Order items mini list -->
+                        <div class="mb-3" style="max-height: 240px; overflow-y: auto;">
+                            @foreach (var item in Model.Items)
+                            {
+                                <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-secondary text-white">x@item.Quantity</span>
+                                        <div>
+                                            <strong class="d-block small text-dark">@item.Product.Code</strong>
+                                            <small class="text-muted" style="font-size: 0.75rem;">@item.Product.Title</small>
+                                        </div>
+                                    </div>
+                                    <strong class="small text-dark">AED @item.ItemTotal.ToString("F2")</strong>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal (@Model.TotalItemsCount items)</span>
+                            <strong class="text-dark">AED @Model.Subtotal.ToString("F2")</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">VAT (5% UAE Standard)</span>
+                            <strong class="text-dark">AED @Model.Vat.ToString("F2")</strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="h5 mb-0 fw-bold text-dark">Grand Total</span>
+                            <span class="h3 mb-0 fw-bold text-danger">AED @Model.GrandTotal.ToString("F2")</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg w-100 py-3 fw-bold rounded-3 shadow">
+                            <i class="bi bi-check2-circle me-2"></i> Place Wholesale Order
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <a href="@Url.Action("Index", "Cart")" class="text-muted small"><i class="bi bi-arrow-left me-1"></i> Return to Cart Edit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</main>

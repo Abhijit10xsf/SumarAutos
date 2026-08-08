@@ -1,0 +1,33 @@
+@{
+    ViewBag.Title = "Order Confirmed | TradeParts Wholesale";
+}
+<main class="container py-5 text-center" style="max-width: 650px;">
+    <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
+        <div class="card-body">
+            <div class="mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-circle shadow" style="width: 80px; height: 80px;">
+                    <i class="bi bi-check-lg display-4"></i>
+                </div>
+            </div>
+            <h1 class="h3 fw-bold mb-2">Wholesale Order Received!</h1>
+            <p class="text-muted mb-4">Thank you for your order. Our warehouse fulfillment team is currently processing your parts request.</p>
+
+            <div class="bg-light p-3 rounded-3 mb-4 text-start">
+                <div class="row g-2 small">
+                    <div class="col-6 text-muted">Purchase Order Ref:</div>
+                    <div class="col-6 text-end fw-bold text-dark">@ViewBag.OrderNumber</div>
+                    <div class="col-6 text-muted">Order Total (incl. VAT):</div>
+                    <div class="col-6 text-end fw-bold text-danger">AED @ViewBag.OrderTotal</div>
+                    <div class="col-6 text-muted">Status:</div>
+                    <div class="col-6 text-end"><span class="badge bg-warning text-dark">Processing</span></div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-danger btn-lg px-4 fw-bold rounded-3">
+                    <i class="bi bi-grid me-2"></i> Back to Catalog
+                </a>
+            </div>
+        </div>
+    </div>
+</main>

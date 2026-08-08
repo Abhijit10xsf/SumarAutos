@@ -1,0 +1,257 @@
+@model SumarAuto.Data.Entities.User
+@{
+    ViewBag.Title = "B2B Account Details | TradeParts Wholesale";
+    var orders = ViewBag.Orders as IEnumerable<SumarAuto.Data.Entities.Order> ?? new List<SumarAuto.Data.Entities.Order>();
+}
+
+<section class="search-hero py-4">
+    <div class="container-fluid px-xl-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="avatar bg-danger text-white rounded-circle d-flex align-items-center justify-content-center fw-bold fs-3 shadow" style="width: 64px; height: 64px;">
+                    @Model.Initials
+                </div>
+                <div>
+                    <div class="d-flex align-items-center gap-2">
+                        <h1 class="h3 mb-0 fw-bold">@Model.CompanyName</h1>
+                        <span class="badge bg-success-subtle text-success fw-bold px-3 py-1 rounded-pill"><i class="bi bi-patch-check-fill me-1"></i> Active B2B Dealer</span>
+                    </div>
+                    <p class="text-muted mb-0 small">Account ID: <strong class="text-dark">@Model.AccountId</strong> · Member since @Model.CreatedAt.ToString("MMM yyyy")</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary font-weight-bold rounded-3">
+                    <i class="bi bi-grid me-1"></i> Wholesale Catalog
+                </a>
+                <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-danger font-weight-bold rounded-3">
+                    <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<main class="container-fluid px-xl-4 py-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Financial / Credit Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-muted small">Available Credit</span>
+                    <div class="bg-danger text-white rounded-3 p-2 d-grid place-items-center" style="width: 36px; height: 36px;">
+                        <i class="bi bi-wallet2 fs-6"></i>
+                    </div>
+                </div>
+                <div class="h4 mb-0 fw-bold text-danger">AED @Model.AvailableCredit.ToString("N2")</div>
+                <small class="text-muted">Net 30 Days Facility</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-muted small">Approved Credit Limit</span>
+                    <div class="bg-dark text-white rounded-3 p-2 d-grid place-items-center" style="width: 36px; height: 36px;">
+                        <i class="bi bi-graph-up-arrow fs-6"></i>
+                    </div>
+                </div>
+                <div class="h4 mb-0 fw-bold text-dark">AED 100,000.00</div>
+                <small class="text-muted">Reviewed Annually</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-muted small">VAT Registration (TRN)</span>
+                    <div class="bg-primary text-white rounded-3 p-2 d-grid place-items-center" style="width: 36px; height: 36px;">
+                        <i class="bi bi-receipt fs-6"></i>
+                    </div>
+                </div>
+                <div class="h5 mb-0 fw-bold text-dark">@(string.IsNullOrEmpty(Model.TrnNumber) ? "100293847500003" : Model.TrnNumber)</div>
+                <small class="text-muted">UAE Federal Tax Authority</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-muted small">Trade License No.</span>
+                    <div class="bg-info text-white rounded-3 p-2 d-grid place-items-center" style="width: 36px; height: 36px;">
+                        <i class="bi bi-card-heading fs-6"></i>
+                    </div>
+                </div>
+                <div class="h5 mb-0 fw-bold text-dark">@(string.IsNullOrEmpty(Model.TradeLicenseNumber) ? "CN-289410" : Model.TradeLicenseNumber)</div>
+                <small class="text-muted">Licensed Spare Parts Trader</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Tabs -->
+    <div class="row g-4">
+        <!-- Left: Profile Tabs Navigation & Details Form -->
+        <div class="col-lg-7 col-xl-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <ul class="nav nav-pills search-tabs mb-0" id="accountTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold py-2 px-3" id="company-tab" data-bs-toggle="tab" data-bs-target="#companyPane" type="button" role="tab"><i class="bi bi-building me-2"></i> Company Information</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold py-2 px-3" id="orders-tab" data-bs-toggle="tab" data-bs-target="#ordersPane" type="button" role="tab"><i class="bi bi-clock-history me-2"></i> Recent Purchase Orders</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body p-4">
+                    <div class="tab-content" id="accountTabContent">
+                        <!-- Company Details Tab -->
+                        <div class="tab-pane fade show active" id="companyPane" role="tabpanel">
+                            <h3 class="h5 fw-bold text-dark mb-3">Update Dealer Information</h3>
+                            
+                            @using (Html.BeginForm("UpdateDetails", "Account", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Company Registered Name</label>
+                                        <input type="text" class="form-control bg-light" value="@Model.CompanyName" readonly disabled />
+                                        <small class="text-muted">Contact support to modify legal company name.</small>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">B2B Account ID</label>
+                                        <input type="text" class="form-control bg-light" value="@Model.AccountId" readonly disabled />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Authorized Contact Person *</label>
+                                        <input type="text" name="contactPerson" class="form-control" value="@Model.ContactPerson" required />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Work Email Address</label>
+                                        <input type="email" class="form-control bg-light" value="@Model.Email" readonly disabled />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Mobile / Phone Number *</label>
+                                        <input type="text" name="phone" class="form-control" value="@Model.Phone" required />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">City / Emirate *</label>
+                                        <input type="text" name="city" class="form-control" value="@Model.City" required />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">TRN Number (VAT)</label>
+                                        <input type="text" name="trnNumber" class="form-control" value="@(string.IsNullOrEmpty(Model.TrnNumber) ? "100293847500003" : Model.TrnNumber)" />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Trade License Number</label>
+                                        <input type="text" name="tradeLicenseNumber" class="form-control" value="@(string.IsNullOrEmpty(Model.TradeLicenseNumber) ? "CN-289410" : Model.TradeLicenseNumber)" />
+                                    </div>
+
+                                    <div class="col-12 mt-4 text-end">
+                                        <button type="submit" class="btn btn-danger btn-lg px-4 fw-bold rounded-3 shadow">
+                                            <i class="bi bi-save me-2"></i> Save Changes
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Orders History Tab -->
+                        <div class="tab-pane fade" id="ordersPane" role="tabpanel">
+                            <h3 class="h5 fw-bold text-dark mb-3">Order Activity</h3>
+                            @if (!orders.Any())
+                            {
+                                <div class="text-center py-4">
+                                    <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+                                    <p class="text-muted">No purchase orders placed yet.</p>
+                                    <a href="@Url.Action("Index", "Home")" class="btn btn-danger btn-sm px-3 fw-bold">Explore Wholesale Catalog</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>PO Number</th>
+                                                <th>Date</th>
+                                                <th>Fulfillment</th>
+                                                <th>Payment</th>
+                                                <th>Grand Total</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var o in orders)
+                                            {
+                                                <tr>
+                                                    <td><strong class="text-danger">@o.OrderNumber</strong></td>
+                                                    <td class="small text-muted">@o.CreatedAt.ToString("dd MMM yyyy HH:mm")</td>
+                                                    <td><span class="badge bg-secondary">@o.FulfillmentMethod</span></td>
+                                                    <td><span class="badge bg-light text-dark border">@o.PaymentMethod</span></td>
+                                                    <td><strong class="text-dark">AED @o.GrandTotal.ToString("N2")</strong></td>
+                                                    <td><span class="badge bg-warning text-dark">@o.OrderStatus</span></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Support & Warehouse Info -->
+        <div class="col-lg-5 col-xl-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-dark text-white p-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-danger text-white rounded-3 p-2 d-grid place-items-center" style="width: 44px; height: 44px;">
+                        <i class="bi bi-headset fs-4"></i>
+                    </div>
+                    <div>
+                        <h4 class="h6 mb-0 text-white fw-bold">Dedicated B2B Account Manager</h4>
+                        <small class="text-white-50">Sharjah Wholesale Desk</small>
+                    </div>
+                </div>
+                <p class="text-white-50 small mb-3">For custom bulk orders, container shipments, or credit extension requests, contact your account executive.</p>
+                <div class="bg-white bg-opacity-10 p-3 rounded-3 mb-3 text-white small">
+                    <strong class="d-block mb-1 text-white"><i class="bi bi-telephone text-danger me-1"></i> Direct Line:</strong> +971 6 534 8920<br>
+                    <strong class="d-block mt-2 mb-1 text-white"><i class="bi bi-envelope text-danger me-1"></i> Email:</strong> b2b-desk@tradeparts.example
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 bg-light p-4">
+                <h5 class="h6 fw-bold mb-3"><i class="bi bi-geo-alt-fill text-danger me-2"></i> Primary Fulfillment Depots</h5>
+                <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-3">
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-building text-dark fs-5 mt-1"></i>
+                        <div>
+                            <strong class="text-dark d-block">Sharjah Main Warehouse</strong>
+                            Industrial Area 4, Near BMW Road, Sharjah, UAE
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-start gap-2">
+                        <i class="bi bi-globe-americas text-dark fs-5 mt-1"></i>
+                        <div>
+                            <strong class="text-dark d-block">Jebel Ali Logistics Hub</strong>
+                            Free Zone South (JAFZA), Gate 4, Dubai, UAE
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>

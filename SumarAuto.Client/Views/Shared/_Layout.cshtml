@@ -1,0 +1,266 @@
+@using SumarAuto.Data.Repositories
+@{
+    var cartRepo = new CartRepository();
+    var currentUser = Session["CurrentUser"] as SumarAuto.Data.Entities.User;
+    var userId = currentUser != null ? currentUser.Id : 0;
+    var cartSummary = cartRepo.GetCart(userId);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="TradeParts - Responsive B2B Wholesale Automotive Parts Catalog">
+    <title>@ViewBag.Title - TradeParts Wholesale</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap Icons CDN for full icon support -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <!-- Template Styles -->
+    <link href="~/Content/assets/vendor/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/assets/css/app.css" rel="stylesheet">
+
+    <style>
+        .nav-link.active-page {
+            color: #fff !important;
+            background: rgba(255,255,255,.15) !important;
+        }
+        .user-dropdown .dropdown-toggle::after {
+            display: none;
+        }
+        .badge-b2b {
+            background-color: var(--brand);
+        }
+    </style>
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <!-- Top utility bar -->
+    <div class="utility-bar d-none d-lg-block">
+        <div class="container-fluid px-xl-4">
+            <div class="d-flex justify-content-between align-items-center py-2">
+                <div class="small text-white-50">
+                    <span class="me-3"><i class="bi bi-headset me-1"></i> Sales support: +971 4 555 0198</span>
+                    <span><i class="bi bi-envelope me-1"></i> wholesale@tradeparts.example</span>
+                </div>
+                <div class="small d-flex gap-3">
+                    <a href="#" class="utility-link"><i class="bi bi-truck me-1"></i> Track shipment</a>
+                    <a href="#" class="utility-link"><i class="bi bi-question-circle me-1"></i> Help</a>
+                    <a href="#" class="utility-link"><i class="bi bi-globe2 me-1"></i> EN</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main navigation -->
+    <nav class="navbar navbar-expand-xl navbar-dark main-navbar sticky-top">
+        <div class="container-fluid px-xl-4">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="@Url.Action("Index", "Home")">
+                <span class="brand-mark">T</span>
+                <span class="fw-bold">TradeParts</span>
+                <span class="badge text-bg-danger rounded-pill d-none d-sm-inline">B2B</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto mb-2 mb-xl-0">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewBag.CurrentNav == "Catalog" ? "active" : "")" href="@Url.Action("Index", "Home")">
+                            <i class="bi bi-grid me-1"></i> Catalog
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewBag.CurrentNav == "Cart" ? "active" : "")" href="@Url.Action("Index", "Cart")">
+                            <i class="bi bi-cart3 me-1"></i> Cart
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-receipt me-1"></i> Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-arrow-left-right me-1"></i> Claims</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-truck me-1"></i> In Transit</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-download me-1"></i> Downloads</a></li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2 nav-actions">
+                    <button class="btn btn-outline-light position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartCanvas" aria-controls="cartCanvas">
+                        <i class="bi bi-cart3"></i>
+                        <span class="d-none d-md-inline ms-1">Cart</span>
+                        <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">@cartSummary.TotalItemsCount</span>
+                    </button>
+
+                    @if (Session["CurrentUser"] != null || currentUser != null)
+                    {
+                        <div class="dropdown user-dropdown">
+                            <button class="btn btn-light account-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="avatar">@currentUser.Initials</span>
+                                <span class="d-none d-md-inline text-start ms-2">
+                                    <small class="d-block text-muted lh-1">Welcome</small>
+                                    <strong class="small">@currentUser.CompanyName</strong>
+                                </span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                                <li class="dropdown-header">
+                                    <strong>@currentUser.ContactPerson</strong><br>
+                                    <small class="text-muted">Account: @currentUser.AccountId</small>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Cart")"><i class="bi bi-cart3 me-2 text-danger"></i>View Cart (@cartSummary.TotalItemsCount)</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Details", "Account")"><i class="bi bi-person-circle me-2 text-primary"></i>Account Details</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="@Url.Action("Logout", "Account")"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-danger px-3 fw-bold">
+                            <i class="bi bi-person-circle me-1"></i> Sign In / Register
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    @RenderBody()
+
+    <!-- Global Cart Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartCanvas" aria-labelledby="cartCanvasLabel">
+        <div class="offcanvas-header border-bottom">
+            <div>
+                <h5 class="offcanvas-title" id="cartCanvasLabel">Your wholesale cart</h5>
+                <small class="text-muted">Prices exclude VAT (5%)</small>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div id="cartItems" class="cart-items flex-grow-1">
+                @if (cartSummary.Items.Count == 0)
+                {
+                    <div class="cart-empty">
+                        <div>
+                            <i class="bi bi-cart3"></i>
+                            <h6 class="mt-3">Your cart is empty</h6>
+                            <p class="small mb-0">Add catalog items to begin an order.</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    foreach (var item in cartSummary.Items)
+                    {
+                        <div class="cart-item" data-cart-product-id="@item.ProductId">
+                            <img src="@item.Product.Image" alt="@item.Product.Title">
+                            <div>
+                                <div class="cart-item-title">@item.Product.Code - @item.Product.Title</div>
+                                <div class="cart-item-meta">@item.Quantity × AED @item.Product.Price.ToString("F2")</div>
+                                <strong class="small">AED @item.ItemTotal.ToString("F2")</strong>
+                            </div>
+                            <button class="cart-remove" onclick="removeGlobalCartItem(@item.ProductId)" aria-label="Remove item">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="cart-summary border-top pt-3">
+                <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><strong id="cartSubtotal">AED @cartSummary.Subtotal.ToString("F2")</strong></div>
+                <div class="d-flex justify-content-between mb-3 text-muted"><span>VAT (5%)</span><span id="cartVat">AED @cartSummary.Vat.ToString("F2")</span></div>
+                <div class="d-flex justify-content-between h5"><span>Total</span><strong id="cartTotal">AED @cartSummary.GrandTotal.ToString("F2")</strong></div>
+                <a href="@Url.Action("Index", "Cart")" class="btn btn-danger btn-lg w-100 mt-3 fw-bold">Proceed to checkout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="cartToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-dark text-white">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <strong class="me-auto text-white">Cart updated</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body bg-white" id="toastMessage">Item added to your wholesale cart.</div>
+        </div>
+    </div>
+
+    <footer class="site-footer mt-5">
+        <div class="container-fluid px-xl-4 py-4">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <strong class="h6 mb-1 d-block text-white">TradeParts Wholesale</strong>
+                    <div class="small text-white-50">SumarAuto B2B Automotive Spare Parts & Wholesale Management Portal.</div>
+                </div>
+                <div class="col-md-6 text-md-end small text-white-50">© @DateTime.Now.Year TradeParts. All rights reserved.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="~/Scripts/jquery-3.7.0.min.js"></script>
+    <script src="~/Content/assets/vendor/bootstrap.bundle.min.js"></script>
+    <script>
+        function formatMoney(value) {
+            return 'AED ' + Number(value).toFixed(2);
+        }
+
+        function removeGlobalCartItem(productId) {
+            $.ajax({
+                url: '@Url.Action("RemoveFromCartJson", "Home")',
+                type: 'POST',
+                data: { productId: productId },
+                success: function (res) {
+                    if (res.success) {
+                        updateGlobalCartUi(res.cart);
+                        if (typeof refreshCartPage === 'function') {
+                            refreshCartPage();
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateGlobalCartUi(cart) {
+            $('#cartCount').text(cart.TotalItemsCount);
+            $('#cartSubtotal').text(formatMoney(cart.Subtotal));
+            $('#cartVat').text(formatMoney(cart.Vat));
+            $('#cartTotal').text(formatMoney(cart.GrandTotal));
+
+            var container = $('#cartItems');
+            if (!cart.Items || cart.Items.length === 0) {
+                container.html('<div class="cart-empty"><div><i class="bi bi-cart3"></i><h6 class="mt-3">Your cart is empty</h6><p class="small mb-0">Add catalog items to begin an order.</p></div></div>');
+            } else {
+                var html = '';
+                $.each(cart.Items, function (idx, item) {
+                    html += '<div class="cart-item" data-cart-product-id="' + item.ProductId + '">' +
+                        '<img src="' + item.Product.Image + '" alt="' + item.Product.Title + '">' +
+                        '<div>' +
+                        '<div class="cart-item-title">' + item.Product.Code + ' - ' + item.Product.Title + '</div>' +
+                        '<div class="cart-item-meta">' + item.Quantity + ' × ' + formatMoney(item.Product.Price) + '</div>' +
+                        '<strong class="small">' + formatMoney(item.ItemTotal) + '</strong>' +
+                        '</div>' +
+                        '<button class="cart-remove" onclick="removeGlobalCartItem(' + item.ProductId + ')" aria-label="Remove item"><i class="bi bi-trash"></i></button>' +
+                        '</div>';
+                });
+                container.html(html);
+            }
+        }
+
+        function showCartToast(msg) {
+            if (msg) $('#toastMessage').text(msg);
+            var toastEl = document.getElementById('cartToast');
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
