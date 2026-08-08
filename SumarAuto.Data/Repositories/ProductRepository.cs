@@ -45,64 +45,8 @@ namespace SumarAuto.Data.Repositories
 
         public Product GetProductById(int id)
         {
-            try
-            {
-                string query = @"
-SELECT 
-    T0.""DocEntry"" AS ""Id"",
-    T0.""ItemCode"" AS ""Code"", 
-    T0.""ItemName"" AS ""Title"", 
-    COALESCE(T2.""FirmName"", 'Generic') AS ""Brand"", 
-    COALESCE(T1.""ItmsGrpNam"", 'General') AS ""Category"", 
-    COALESCE(T0.""CodeBars"", '') AS ""Ean"", 
-    COALESCE(T0.""SWW"", '') AS ""Oe"", 
-    COALESCE(T0.""PictName"", 'default-part.jpg') AS ""Image"", 
-    COALESCE(T0.""UserText"", '') AS ""Compatibility"",
-    COALESCE(T0.""MinOrdrQty"", 1) AS ""Moq"",
-    COALESCE(P.""Price"", 0) AS ""Price"",
-    COALESCE(W1.""OnHand"", 0) AS ""SharjahStock"",
-    COALESCE(W2.""OnHand"", 0) AS ""JebelStock"",
-    COALESCE(W_ALL.""Transit"", 0) AS ""TransitStock""
-FROM ""OITM"" T0
-LEFT JOIN ""OITB"" T1 ON T0.""ItmsGrpCod"" = T1.""ItmsGrpCod""
-LEFT JOIN ""OMRC"" T2 ON T0.""FirmCode"" = T2.""FirmCode""
-LEFT JOIN (
-    SELECT ""ItemCode"", MIN(""Price"") AS ""Price"" 
-    FROM ""ITM1"" 
-    WHERE ""PriceList"" = 1 
-    GROUP BY ""ItemCode""
-) P ON T0.""ItemCode"" = P.""ItemCode""
-LEFT JOIN (
-    SELECT ""ItemCode"", SUM(""OnHand"") AS ""OnHand"" 
-    FROM ""OITW"" 
-    WHERE ""WhsCode"" IN ('01', 'SHJ') 
-    GROUP BY ""ItemCode""
-) W1 ON T0.""ItemCode"" = W1.""ItemCode""
-LEFT JOIN (
-    SELECT ""ItemCode"", SUM(""OnHand"") AS ""OnHand"" 
-    FROM ""OITW"" 
-    WHERE ""WhsCode"" IN ('02', 'JBL') 
-    GROUP BY ""ItemCode""
-) W2 ON T0.""ItemCode"" = W2.""ItemCode""
-LEFT JOIN (
-    SELECT ""ItemCode"", SUM(""OnOrder"") AS ""Transit"" 
-    FROM ""OITW"" 
-    GROUP BY ""ItemCode""
-) W_ALL ON T0.""ItemCode"" = W_ALL.""ItemCode""
-WHERE T0.""DocEntry"" = " + id;
-
-                DataTable dt = _hanaHelper.ExecuteDataTable(query);
-                if (dt != null && dt.Rows.Count > 0)
-                {
-                    return MapRowToProduct(dt.Rows[0]);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("GetProductById Exception: " + ex.Message);
-            }
-
-            return null;
+            var products = GetAllProducts();
+            return products?.FirstOrDefault(p => p.Id == id);
         }
 
         public SummaryStats GetSummaryStats()
@@ -163,15 +107,14 @@ WHERE T0.""DocEntry"" = " + id;
         private List<Product> GetProductsFromHana(ProductFilter filter)
         {
             string query = @"
-SELECT TOP 100
-    T0.""DocEntry"" AS ""Id"",
+SELECT 
     T0.""ItemCode"" AS ""Code"", 
     T0.""ItemName"" AS ""Title"", 
     COALESCE(T2.""FirmName"", 'Generic') AS ""Brand"", 
     COALESCE(T1.""ItmsGrpNam"", 'General') AS ""Category"", 
     COALESCE(T0.""CodeBars"", '') AS ""Ean"", 
     COALESCE(T0.""SWW"", '') AS ""Oe"", 
-    COALESCE(T0.""PictName"", 'default-part.jpg') AS ""Image"", 
+    COALESCE(T0.""U_Image_1"", 'default-part.jpg') AS ""Image"", 
     COALESCE(T0.""UserText"", '') AS ""Compatibility"",
     COALESCE(T0.""MinOrdrQty"", 1) AS ""Moq"",
     COALESCE(P.""Price"", 0) AS ""Price"",
@@ -205,7 +148,8 @@ LEFT JOIN (
     GROUP BY ""ItemCode""
 ) W_ALL ON T0.""ItemCode"" = W_ALL.""ItemCode""
 WHERE T0.""SellItem"" = 'Y' AND T0.""validFor"" = 'Y'
-ORDER BY T0.""DocEntry"" ASC";
+ORDER BY T0.""ItemCode"" ASC
+LIMIT 100";
 
             DataTable dt = _hanaHelper.ExecuteDataTable(query);
             if (dt == null || dt.Rows.Count == 0) return null;

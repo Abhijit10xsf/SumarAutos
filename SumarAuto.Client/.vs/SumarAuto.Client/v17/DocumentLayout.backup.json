@@ -6,6 +6,10 @@
       "AbsoluteMoniker": "D:0:0:{A3E088A3-2696-47B9-883B-CA6C2EF45DA3}|..\\SumarAuto.Data\\SumarAuto.Data.csproj|d:\\abhijit_s\\sumarautos\\sumarauto.data\\repositories\\productrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|d:\\abhijit_s\\sumarautos\\sumarauto.client\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A3E088A3-2696-47B9-883B-CA6C2EF45DA3}|..\\SumarAuto.Data\\SumarAuto.Data.csproj|d:\\abhijit_s\\sumarautos\\sumarauto.data\\repositories\\cartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -39,21 +43,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 6,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CartRepository.cs",
-              "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Data\\Repositories\\CartRepository.cs",
-              "RelativeDocumentMoniker": "..\\SumarAuto.Data\\Repositories\\CartRepository.cs",
-              "ToolTip": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Data\\Repositories\\CartRepository.cs",
-              "RelativeToolTip": "..\\SumarAuto.Data\\Repositories\\CartRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-08T09:26:51.705Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
@@ -72,20 +63,46 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
+              "ToolTip": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Controllers\\HomeController.cs",
+              "ViewState": "AgIAACAAAADA/////38lwDIAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-08T09:34:08.888Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CartRepository.cs",
+              "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Data\\Repositories\\CartRepository.cs",
+              "RelativeDocumentMoniker": "..\\SumarAuto.Data\\Repositories\\CartRepository.cs",
+              "ToolTip": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Data\\Repositories\\CartRepository.cs",
+              "RelativeToolTip": "..\\SumarAuto.Data\\Repositories\\CartRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-08T09:26:51.705Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "ProductRepository.cs",
               "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Data\\Repositories\\ProductRepository.cs",
               "RelativeDocumentMoniker": "..\\SumarAuto.Data\\Repositories\\ProductRepository.cs",
               "ToolTip": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Data\\Repositories\\ProductRepository.cs",
               "RelativeToolTip": "..\\SumarAuto.Data\\Repositories\\ProductRepository.cs",
-              "ViewState": "AgIAALQAAAAA5MzMzEwTwMQAAABBAAAAAAAAAA==",
+              "ViewState": "AgIAAJUAAAAARGZmZuYbwKUAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-08T09:10:53.902Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "HanaDataHelper.cs",
               "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Data\\HanaDataHelper.cs",
               "RelativeDocumentMoniker": "..\\SumarAuto.Data\\HanaDataHelper.cs",
@@ -98,7 +115,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Web.config",
               "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Web.config",
               "RelativeDocumentMoniker": "Web.config",
@@ -111,7 +128,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Login.cshtml",
               "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Views\\Account\\Login.cshtml",
               "RelativeDocumentMoniker": "Views\\Account\\Login.cshtml",
@@ -124,7 +141,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "LoginVM.cs",
               "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Models\\LoginVM.cs",
               "RelativeDocumentMoniker": "Models\\LoginVM.cs",
@@ -136,7 +153,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "SAPRestServiceLayer.cs",
               "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\SAPRestServiceLayer.cs",
               "RelativeDocumentMoniker": "SAPRestServiceLayer.cs",
@@ -149,7 +166,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "AccountController.cs",
               "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
