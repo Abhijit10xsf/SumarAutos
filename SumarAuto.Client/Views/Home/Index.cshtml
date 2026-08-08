@@ -111,14 +111,16 @@
 
                 <div class="filter-section">
                     <label class="form-label fw-semibold">Brand</label>
-                    @foreach (var b in Model.Brands)
-                    {
-                        var isChecked = Model.Filter.Brands != null && Model.Filter.Brands.Contains(b);
-                        <div class="form-check">
-                            <input class="form-check-input brand-filter" type="checkbox" value="@b" id="brand_@b" @(isChecked ? "checked" : "")>
-                            <label class="form-check-label" for="brand_@b">@b</label>
-                        </div>
-                    }
+                    <div class="brand-list-scrollable">
+                        @foreach (var b in Model.Brands)
+                        {
+                            var isChecked = Model.Filter.Brands != null && Model.Filter.Brands.Contains(b);
+                            <div class="form-check">
+                                <input class="form-check-input brand-filter" type="checkbox" value="@b" id="brand_@b" @(isChecked ? "checked" : "")>
+                                <label class="form-check-label" for="brand_@b">@b</label>
+                            </div>
+                        }
+                    </div>
                 </div>
 
                 <div class="filter-section">
@@ -145,6 +147,23 @@
 
         <!-- Catalog -->
         <section class="col-xl-9">
+            <!-- Category Scrollable Bar -->
+            <div class="category-scroll-container mb-3">
+                <button class="cat-scroll-btn left-btn" id="catScrollLeft" type="button" title="Scroll left"><i class="bi bi-arrow-left-right"></i></button>
+                <div class="category-scroll-inner" id="categoryScrollInner">
+                    <button class="cat-pill @(string.IsNullOrEmpty(Model.Filter.Category) || Model.Filter.Category == "all" ? "active" : "")" data-category="all">
+                        <i class="bi bi-grid-3x3-gap me-1"></i> All Categories
+                    </button>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <button class="cat-pill @(Model.Filter.Category == cat ? "active" : "")" data-category="@cat">
+                            @cat
+                        </button>
+                    }
+                </div>
+                <button class="cat-scroll-btn right-btn" id="catScrollRight" type="button" title="Scroll right"><i class="bi bi-arrow-left-right"></i></button>
+            </div>
+
             <div class="catalog-toolbar mb-3">
                 <div>
                     <div class="small text-muted">Catalog / Search results</div>
@@ -416,9 +435,29 @@
         $('.brand-filter').on('change', fetchAndRenderProducts);
         $('#minPrice, #maxPrice').on('input', fetchAndRenderProducts);
 
+        $('.cat-pill').on('click', function () {
+            $('.cat-pill').removeClass('active');
+            $(this).addClass('active');
+            var cat = $(this).data('category');
+            $('#categoryFilter').val(cat);
+            fetchAndRenderProducts();
+        });
+
+        $('#catScrollLeft').on('click', function () {
+            var container = document.getElementById('categoryScrollInner');
+            if (container) container.scrollBy({ left: -220, behavior: 'smooth' });
+        });
+
+        $('#catScrollRight').on('click', function () {
+            var container = document.getElementById('categoryScrollInner');
+            if (container) container.scrollBy({ left: 220, behavior: 'smooth' });
+        });
+
         $('#clearFilters').on('click', function () {
             $('#catalogSearch').val('');
             $('#categoryFilter').val('all');
+            $('.cat-pill').removeClass('active');
+            $('.cat-pill[data-category="all"]').addClass('active');
             $('.brand-filter').prop('checked', false);
             $('#sharjahOnly, #jebelOnly, #offersOnly, #inStockOnly').prop('checked', false);
             $('#minPrice, #maxPrice').val('');
@@ -443,6 +482,8 @@
         $('#applyMobileFilters').on('click', function () {
             var cat = $('#mobileCategoryFilter').val();
             $('#categoryFilter').val(cat);
+            $('.cat-pill').removeClass('active');
+            $('.cat-pill[data-category="' + cat + '"]').addClass('active');
             var brand = $('#mobileBrandFilter').val();
             $('.brand-filter').prop('checked', false);
             if (brand !== 'all') {
