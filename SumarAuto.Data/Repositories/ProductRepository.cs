@@ -32,7 +32,7 @@ namespace SumarAuto.Data.Repositories
                 var hanaProducts = GetProductsFromHana(filter);
                 if (hanaProducts != null && hanaProducts.Count > 0)
                 {
-                    return hanaProducts;
+                    return hanaProducts.Take(100);
                 }
             }
             catch (Exception ex)
@@ -40,8 +40,7 @@ namespace SumarAuto.Data.Repositories
                 System.Diagnostics.Debug.WriteLine("HANA Query Exception: " + ex.Message);
             }
 
-            var staticProducts = GetStaticProducts();
-            return ApplyFilter(staticProducts, filter);
+            return new List<Product>();
         }
 
         public Product GetProductById(int id)
@@ -67,9 +66,24 @@ SELECT
 FROM ""OITM"" T0
 LEFT JOIN ""OITB"" T1 ON T0.""ItmsGrpCod"" = T1.""ItmsGrpCod""
 LEFT JOIN ""OMRC"" T2 ON T0.""FirmCode"" = T2.""FirmCode""
-LEFT JOIN ""ITM1"" P ON T0.""ItemCode"" = P.""ItemCode"" AND P.""PriceList"" = 1
-LEFT JOIN ""OITW"" W1 ON T0.""ItemCode"" = W1.""ItemCode"" AND (W1.""WhsCode"" = '01' OR W1.""WhsCode"" = 'SHJ')
-LEFT JOIN ""OITW"" W2 ON T0.""ItemCode"" = W2.""ItemCode"" AND (W2.""WhsCode"" = '02' OR W2.""WhsCode"" = 'JBL')
+LEFT JOIN (
+    SELECT ""ItemCode"", MIN(""Price"") AS ""Price"" 
+    FROM ""ITM1"" 
+    WHERE ""PriceList"" = 1 
+    GROUP BY ""ItemCode""
+) P ON T0.""ItemCode"" = P.""ItemCode""
+LEFT JOIN (
+    SELECT ""ItemCode"", SUM(""OnHand"") AS ""OnHand"" 
+    FROM ""OITW"" 
+    WHERE ""WhsCode"" IN ('01', 'SHJ') 
+    GROUP BY ""ItemCode""
+) W1 ON T0.""ItemCode"" = W1.""ItemCode""
+LEFT JOIN (
+    SELECT ""ItemCode"", SUM(""OnHand"") AS ""OnHand"" 
+    FROM ""OITW"" 
+    WHERE ""WhsCode"" IN ('02', 'JBL') 
+    GROUP BY ""ItemCode""
+) W2 ON T0.""ItemCode"" = W2.""ItemCode""
 LEFT JOIN (
     SELECT ""ItemCode"", SUM(""OnOrder"") AS ""Transit"" 
     FROM ""OITW"" 
@@ -83,11 +97,12 @@ WHERE T0.""DocEntry"" = " + id;
                     return MapRowToProduct(dt.Rows[0]);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("GetProductById Exception: " + ex.Message);
+            }
 
-            var p = _db.Products.FirstOrDefault(x => x.Id == id);
-            if (p != null) ParseSpecsJson(p);
-            return p;
+            return null;
         }
 
         public SummaryStats GetSummaryStats()
@@ -115,12 +130,12 @@ WHERE T0.""DocEntry"" = " + id;
                         var cat = row[0]?.ToString();
                         if (!string.IsNullOrWhiteSpace(cat)) categories.Add(cat);
                     }
-                    if (categories.Count > 0) return categories;
+                    return categories;
                 }
             }
             catch { }
 
-            return _db.Products.Select(p => p.Category).Where(c => c != null && c != "").Distinct().OrderBy(c => c).ToList();
+            return new List<string>();
         }
 
         public List<string> GetBrands()
@@ -137,18 +152,18 @@ WHERE T0.""DocEntry"" = " + id;
                         var brand = row[0]?.ToString();
                         if (!string.IsNullOrWhiteSpace(brand)) brands.Add(brand);
                     }
-                    if (brands.Count > 0) return brands;
+                    return brands;
                 }
             }
             catch { }
 
-            return _db.Products.Select(p => p.Brand).Where(b => b != null && b != "").Distinct().OrderBy(b => b).ToList();
+            return new List<string>();
         }
 
         private List<Product> GetProductsFromHana(ProductFilter filter)
         {
             string query = @"
-SELECT 
+SELECT TOP 100
     T0.""DocEntry"" AS ""Id"",
     T0.""ItemCode"" AS ""Code"", 
     T0.""ItemName"" AS ""Title"", 
@@ -166,23 +181,45 @@ SELECT
 FROM ""OITM"" T0
 LEFT JOIN ""OITB"" T1 ON T0.""ItmsGrpCod"" = T1.""ItmsGrpCod""
 LEFT JOIN ""OMRC"" T2 ON T0.""FirmCode"" = T2.""FirmCode""
-LEFT JOIN ""ITM1"" P ON T0.""ItemCode"" = P.""ItemCode"" AND P.""PriceList"" = 1
-LEFT JOIN ""OITW"" W1 ON T0.""ItemCode"" = W1.""ItemCode"" AND (W1.""WhsCode"" = '01' OR W1.""WhsCode"" = 'SHJ')
-LEFT JOIN ""OITW"" W2 ON T0.""ItemCode"" = W2.""ItemCode"" AND (W2.""WhsCode"" = '02' OR W2.""WhsCode"" = 'JBL')
+LEFT JOIN (
+    SELECT ""ItemCode"", MIN(""Price"") AS ""Price"" 
+    FROM ""ITM1"" 
+    WHERE ""PriceList"" = 1 
+    GROUP BY ""ItemCode""
+) P ON T0.""ItemCode"" = P.""ItemCode""
+LEFT JOIN (
+    SELECT ""ItemCode"", SUM(""OnHand"") AS ""OnHand"" 
+    FROM ""OITW"" 
+    WHERE ""WhsCode"" IN ('01', 'SHJ') 
+    GROUP BY ""ItemCode""
+) W1 ON T0.""ItemCode"" = W1.""ItemCode""
+LEFT JOIN (
+    SELECT ""ItemCode"", SUM(""OnHand"") AS ""OnHand"" 
+    FROM ""OITW"" 
+    WHERE ""WhsCode"" IN ('02', 'JBL') 
+    GROUP BY ""ItemCode""
+) W2 ON T0.""ItemCode"" = W2.""ItemCode""
 LEFT JOIN (
     SELECT ""ItemCode"", SUM(""OnOrder"") AS ""Transit"" 
     FROM ""OITW"" 
     GROUP BY ""ItemCode""
 ) W_ALL ON T0.""ItemCode"" = W_ALL.""ItemCode""
-WHERE T0.""SellItem"" = 'Y' AND T0.""validFor"" = 'Y'";
+WHERE T0.""SellItem"" = 'Y' AND T0.""validFor"" = 'Y'
+ORDER BY T0.""DocEntry"" ASC";
 
             DataTable dt = _hanaHelper.ExecuteDataTable(query);
             if (dt == null || dt.Rows.Count == 0) return null;
 
+            HashSet<string> seenCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             List<Product> products = new List<Product>();
             foreach (DataRow row in dt.Rows)
             {
-                products.Add(MapRowToProduct(row));
+                var p = MapRowToProduct(row);
+                if (!string.IsNullOrWhiteSpace(p.Code) && seenCodes.Add(p.Code))
+                {
+                    products.Add(p);
+                    if (products.Count >= 100) break;
+                }
             }
 
             // Apply filter logic in memory
@@ -451,127 +488,6 @@ WHERE T0.""SellItem"" = 'Y' AND T0.""validFor"" = 'Y'";
                 }
                 catch { }
             }
-        }
-
-        public static List<Product> GetStaticProducts()
-        {
-            return new List<Product>
-            {
-                new Product
-                {
-                    Id = 1,
-                    Code = "MCP-001",
-                    Title = "Seal ring, spark plug tube",
-                    Brand = "FEBEST",
-                    Category = "Engine",
-                    Image = "/Content/assets/img/seal-ring.svg",
-                    Ean = "4056111015293",
-                    Oe = "10966-AA000",
-                    Compatibility = "Subaru / Chery / Mitsubishi",
-                    Specs = new Dictionary<string, string> { { "Inner diameter", "24 mm" }, { "Outer diameter", "35 mm" } },
-                    SharjahStock = 119,
-                    JebelStock = 2368,
-                    TransitStock = 180,
-                    Price = 6.06m,
-                    Moq = 1,
-                    IsOffer = true
-                },
-                new Product
-                {
-                    Id = 2,
-                    Code = "AF-4198",
-                    Title = "Premium engine air filter",
-                    Brand = "BOSCH",
-                    Category = "Filters",
-                    Image = "/Content/assets/img/air-filter.svg",
-                    Ean = "4047026500198",
-                    Oe = "17801-0M030",
-                    Compatibility = "Toyota Corolla / Yaris",
-                    Specs = new Dictionary<string, string> { { "Length", "278 mm" }, { "Width", "167 mm" } },
-                    SharjahStock = 320,
-                    JebelStock = 985,
-                    TransitStock = 80,
-                    Price = 21.75m,
-                    Moq = 2,
-                    IsOffer = false
-                },
-                new Product
-                {
-                    Id = 3,
-                    Code = "BP-7740",
-                    Title = "Ceramic front brake pad set",
-                    Brand = "FEBEST",
-                    Category = "Brake",
-                    Image = "/Content/assets/img/brake-pad.svg",
-                    Ean = "4056111097749",
-                    Oe = "D1060-JA00A",
-                    Compatibility = "Nissan Altima / Teana",
-                    Specs = new Dictionary<string, string> { { "Axle", "Front" }, { "Wear sensor", "Included" } },
-                    SharjahStock = 86,
-                    JebelStock = 412,
-                    TransitStock = 120,
-                    Price = 68.50m,
-                    Moq = 1,
-                    IsOffer = true
-                },
-                new Product
-                {
-                    Id = 4,
-                    Code = "SP-7164",
-                    Title = "Iridium spark plug long life",
-                    Brand = "NGK",
-                    Category = "Electrical",
-                    Image = "/Content/assets/img/spark-plug.svg",
-                    Ean = "0087295171646",
-                    Oe = "ILZKR7B11",
-                    Compatibility = "Honda / Hyundai / Kia",
-                    Specs = new Dictionary<string, string> { { "Thread", "M12 x 1.25" }, { "Gap", "1.1 mm" } },
-                    SharjahStock = 560,
-                    JebelStock = 1900,
-                    TransitStock = 0,
-                    Price = 31.20m,
-                    Moq = 4,
-                    IsOffer = false
-                },
-                new Product
-                {
-                    Id = 5,
-                    Code = "WB-2305",
-                    Title = "Front wheel bearing kit",
-                    Brand = "SKF",
-                    Category = "Suspension",
-                    Image = "/Content/assets/img/bearing.svg",
-                    Ean = "7316575623052",
-                    Oe = "40210-2Y000",
-                    Compatibility = "Nissan Maxima / Murano",
-                    Specs = new Dictionary<string, string> { { "Inner diameter", "45 mm" }, { "Outer diameter", "84 mm" } },
-                    SharjahStock = 45,
-                    JebelStock = 98,
-                    TransitStock = 60,
-                    Price = 145.90m,
-                    Moq = 1,
-                    IsOffer = false
-                },
-                new Product
-                {
-                    Id = 6,
-                    Code = "DB-6PK2135",
-                    Title = "Multi-rib auxiliary drive belt",
-                    Brand = "BOSCH",
-                    Category = "Engine",
-                    Image = "/Content/assets/img/drive-belt.svg",
-                    Ean = "4047025272133",
-                    Oe = "6PK2135",
-                    Compatibility = "Toyota / Lexus / Mitsubishi",
-                    Specs = new Dictionary<string, string> { { "Ribs", "6" }, { "Length", "2135 mm" } },
-                    SharjahStock = 210,
-                    JebelStock = 640,
-                    TransitStock = 150,
-                    Price = 47.80m,
-                    Moq = 2,
-                    IsOffer = true
-                }
-            };
         }
     }
 }
