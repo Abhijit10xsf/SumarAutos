@@ -37,11 +37,11 @@ namespace SumarAuto.Data.Repositories
             }
             catch (Exception ex)
             {
-                // Fallback to local DB if HANA is unreachable during testing
                 System.Diagnostics.Debug.WriteLine("HANA Query Exception: " + ex.Message);
             }
 
-            return GetProductsFromLocalDb(filter);
+            var staticProducts = GetStaticProducts();
+            return ApplyFilter(staticProducts, filter);
         }
 
         public Product GetProductById(int id)
@@ -191,16 +191,30 @@ WHERE T0.""SellItem"" = 'Y' AND T0.""validFor"" = 'Y'";
 
         private Product MapRowToProduct(DataRow row)
         {
+            int id = Convert.ToInt32(row["Id"] != DBNull.Value ? row["Id"] : 0);
+            string code = row["Code"]?.ToString() ?? "";
+            string title = row["Title"]?.ToString() ?? "";
+            string brand = row["Brand"]?.ToString() ?? "Generic";
+            string category = row["Category"]?.ToString() ?? "General";
+            string rawImage = row["Image"]?.ToString() ?? "";
+
+            if (id == 0)
+            {
+                id = Math.Abs(code.GetHashCode());
+            }
+
+            string assetImage = GetAssetImageForProduct(rawImage, title, category, code, id);
+
             var p = new Product
             {
-                Id = Convert.ToInt32(row["Id"] != DBNull.Value ? row["Id"] : 0),
-                Code = row["Code"]?.ToString() ?? "",
-                Title = row["Title"]?.ToString() ?? "",
-                Brand = row["Brand"]?.ToString() ?? "Generic",
-                Category = row["Category"]?.ToString() ?? "General",
+                Id = id,
+                Code = code,
+                Title = title,
+                Brand = brand,
+                Category = category,
                 Ean = row["Ean"]?.ToString() ?? "",
                 Oe = row["Oe"]?.ToString() ?? "",
-                Image = row["Image"]?.ToString() ?? "default-part.jpg",
+                Image = assetImage,
                 Compatibility = row["Compatibility"]?.ToString() ?? "",
                 Moq = Convert.ToInt32(row["Moq"] != DBNull.Value ? row["Moq"] : 1),
                 Price = Convert.ToDecimal(row["Price"] != DBNull.Value ? row["Price"] : 0m),
@@ -210,12 +224,45 @@ WHERE T0.""SellItem"" = 'Y' AND T0.""validFor"" = 'Y'";
                 IsOffer = false
             };
 
-            if (p.Id == 0)
+            return p;
+        }
+
+        private string GetAssetImageForProduct(string rawImage, string title, string category, string code, int id)
+        {
+            if (!string.IsNullOrWhiteSpace(rawImage) &&
+                (rawImage.StartsWith("/Content/assets/", StringComparison.OrdinalIgnoreCase) ||
+                 rawImage.StartsWith("http", StringComparison.OrdinalIgnoreCase)))
             {
-                p.Id = Math.Abs(p.Code.GetHashCode());
+                return rawImage;
             }
 
-            return p;
+            string search = $"{title} {category} {code}".ToLowerInvariant();
+
+            if (search.Contains("filter") || search.Contains("air") || search.Contains("oil") || search.Contains("fuel"))
+                return "/Content/assets/img/air-filter.svg";
+            if (search.Contains("brake") || search.Contains("pad") || search.Contains("disc") || search.Contains("shoe") || search.Contains("caliper"))
+                return "/Content/assets/img/brake-pad.svg";
+            if (search.Contains("plug") || search.Contains("spark") || search.Contains("ignition") || search.Contains("sensor") || search.Contains("coil") || search.Contains("elec"))
+                return "/Content/assets/img/spark-plug.svg";
+            if (search.Contains("bearing") || search.Contains("wheel") || search.Contains("suspension") || search.Contains("arm") || search.Contains("joint") || search.Contains("strut") || search.Contains("shock"))
+                return "/Content/assets/img/bearing.svg";
+            if (search.Contains("belt") || search.Contains("rib") || search.Contains("drive") || search.Contains("timing") || search.Contains("chain"))
+                return "/Content/assets/img/drive-belt.svg";
+            if (search.Contains("seal") || search.Contains("ring") || search.Contains("gasket") || search.Contains("o-ring") || search.Contains("washer"))
+                return "/Content/assets/img/seal-ring.svg";
+
+            string[] assetImages = new string[]
+            {
+                "/Content/assets/img/air-filter.svg",
+                "/Content/assets/img/brake-pad.svg",
+                "/Content/assets/img/spark-plug.svg",
+                "/Content/assets/img/bearing.svg",
+                "/Content/assets/img/drive-belt.svg",
+                "/Content/assets/img/seal-ring.svg"
+            };
+
+            int index = Math.Abs(id) % assetImages.Length;
+            return assetImages[index];
         }
 
         private List<Product> ApplyFilter(List<Product> list, ProductFilter filter)
@@ -404,6 +451,127 @@ WHERE T0.""SellItem"" = 'Y' AND T0.""validFor"" = 'Y'";
                 }
                 catch { }
             }
+        }
+
+        public static List<Product> GetStaticProducts()
+        {
+            return new List<Product>
+            {
+                new Product
+                {
+                    Id = 1,
+                    Code = "MCP-001",
+                    Title = "Seal ring, spark plug tube",
+                    Brand = "FEBEST",
+                    Category = "Engine",
+                    Image = "/Content/assets/img/seal-ring.svg",
+                    Ean = "4056111015293",
+                    Oe = "10966-AA000",
+                    Compatibility = "Subaru / Chery / Mitsubishi",
+                    Specs = new Dictionary<string, string> { { "Inner diameter", "24 mm" }, { "Outer diameter", "35 mm" } },
+                    SharjahStock = 119,
+                    JebelStock = 2368,
+                    TransitStock = 180,
+                    Price = 6.06m,
+                    Moq = 1,
+                    IsOffer = true
+                },
+                new Product
+                {
+                    Id = 2,
+                    Code = "AF-4198",
+                    Title = "Premium engine air filter",
+                    Brand = "BOSCH",
+                    Category = "Filters",
+                    Image = "/Content/assets/img/air-filter.svg",
+                    Ean = "4047026500198",
+                    Oe = "17801-0M030",
+                    Compatibility = "Toyota Corolla / Yaris",
+                    Specs = new Dictionary<string, string> { { "Length", "278 mm" }, { "Width", "167 mm" } },
+                    SharjahStock = 320,
+                    JebelStock = 985,
+                    TransitStock = 80,
+                    Price = 21.75m,
+                    Moq = 2,
+                    IsOffer = false
+                },
+                new Product
+                {
+                    Id = 3,
+                    Code = "BP-7740",
+                    Title = "Ceramic front brake pad set",
+                    Brand = "FEBEST",
+                    Category = "Brake",
+                    Image = "/Content/assets/img/brake-pad.svg",
+                    Ean = "4056111097749",
+                    Oe = "D1060-JA00A",
+                    Compatibility = "Nissan Altima / Teana",
+                    Specs = new Dictionary<string, string> { { "Axle", "Front" }, { "Wear sensor", "Included" } },
+                    SharjahStock = 86,
+                    JebelStock = 412,
+                    TransitStock = 120,
+                    Price = 68.50m,
+                    Moq = 1,
+                    IsOffer = true
+                },
+                new Product
+                {
+                    Id = 4,
+                    Code = "SP-7164",
+                    Title = "Iridium spark plug long life",
+                    Brand = "NGK",
+                    Category = "Electrical",
+                    Image = "/Content/assets/img/spark-plug.svg",
+                    Ean = "0087295171646",
+                    Oe = "ILZKR7B11",
+                    Compatibility = "Honda / Hyundai / Kia",
+                    Specs = new Dictionary<string, string> { { "Thread", "M12 x 1.25" }, { "Gap", "1.1 mm" } },
+                    SharjahStock = 560,
+                    JebelStock = 1900,
+                    TransitStock = 0,
+                    Price = 31.20m,
+                    Moq = 4,
+                    IsOffer = false
+                },
+                new Product
+                {
+                    Id = 5,
+                    Code = "WB-2305",
+                    Title = "Front wheel bearing kit",
+                    Brand = "SKF",
+                    Category = "Suspension",
+                    Image = "/Content/assets/img/bearing.svg",
+                    Ean = "7316575623052",
+                    Oe = "40210-2Y000",
+                    Compatibility = "Nissan Maxima / Murano",
+                    Specs = new Dictionary<string, string> { { "Inner diameter", "45 mm" }, { "Outer diameter", "84 mm" } },
+                    SharjahStock = 45,
+                    JebelStock = 98,
+                    TransitStock = 60,
+                    Price = 145.90m,
+                    Moq = 1,
+                    IsOffer = false
+                },
+                new Product
+                {
+                    Id = 6,
+                    Code = "DB-6PK2135",
+                    Title = "Multi-rib auxiliary drive belt",
+                    Brand = "BOSCH",
+                    Category = "Engine",
+                    Image = "/Content/assets/img/drive-belt.svg",
+                    Ean = "4047025272133",
+                    Oe = "6PK2135",
+                    Compatibility = "Toyota / Lexus / Mitsubishi",
+                    Specs = new Dictionary<string, string> { { "Ribs", "6" }, { "Length", "2135 mm" } },
+                    SharjahStock = 210,
+                    JebelStock = 640,
+                    TransitStock = 150,
+                    Price = 47.80m,
+                    Moq = 2,
+                    IsOffer = true
+                }
+            };
         }
     }
 }

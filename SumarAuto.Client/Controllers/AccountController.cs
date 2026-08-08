@@ -12,6 +12,11 @@ namespace SumarAuto.Client.Controllers
     {
         SAPRestServiceLayer serviceLayer;
 
+        public AccountController()
+        {
+            serviceLayer = new SAPRestServiceLayer();
+        }
+
         public AccountController(SAPRestServiceLayer _serviceLayer)
         {
             serviceLayer = _serviceLayer;
@@ -19,6 +24,10 @@ namespace SumarAuto.Client.Controllers
 
         public ActionResult Login()
         {
+            if (Session["CurrentUser"] != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View(new LoginVM());
         }
 
@@ -58,6 +67,30 @@ namespace SumarAuto.Client.Controllers
                 Session["User"] = model.UserName;
                 Session["TempUser"] = model.UserName;
                 Session["TempPassword"] = model.Password;
+
+                User currentUser = null;
+                try
+                {
+                    IUserRepository userRepo = new UserRepository();
+                    currentUser = userRepo.Authenticate(model.UserName, model.Password);
+                }
+                catch
+                {
+                }
+
+                if (currentUser == null)
+                {
+                    int loggedUserId = Session["LoggedUserId"] != null ? Convert.ToInt32(Session["LoggedUserId"]) : 1;
+                    currentUser = new User
+                    {
+                        Id = loggedUserId > 0 ? loggedUserId : 1,
+                        Username = model.UserName,
+                        Password = model.Password,
+                        EmailId = ""
+                    };
+                }
+
+                Session["CurrentUser"] = currentUser;
 
                 return Json(new { success = true });
             }
