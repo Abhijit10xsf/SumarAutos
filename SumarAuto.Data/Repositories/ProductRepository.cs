@@ -170,19 +170,74 @@ LIMIT 100";
             return ApplyFilter(products, filter);
         }
 
+        private static object GetRowValue(DataRow row, params string[] names)
+        {
+            if (row == null || row.Table == null) return null;
+
+            foreach (var name in names)
+            {
+                if (row.Table.Columns.Contains(name) && row[name] != DBNull.Value)
+                {
+                    return row[name];
+                }
+            }
+
+            foreach (DataColumn col in row.Table.Columns)
+            {
+                foreach (var name in names)
+                {
+                    if (col.ColumnName.Equals(name, StringComparison.OrdinalIgnoreCase) && row[col] != DBNull.Value)
+                    {
+                        return row[col];
+                    }
+                }
+            }
+
+            return null;
+        }
+
         private Product MapRowToProduct(DataRow row)
         {
-            int id = Convert.ToInt32(row["Id"] != DBNull.Value ? row["Id"] : 0);
-            string code = row["Code"]?.ToString() ?? "";
-            string title = row["Title"]?.ToString() ?? "";
-            string brand = row["Brand"]?.ToString() ?? "Generic";
-            string category = row["Category"]?.ToString() ?? "General";
-            string rawImage = row["Image"]?.ToString() ?? "";
+            string code = GetRowValue(row, "Code", "ItemCode")?.ToString() ?? "";
+            string title = GetRowValue(row, "Title", "ItemName")?.ToString() ?? "";
+            string brand = GetRowValue(row, "Brand", "FirmName")?.ToString() ?? "Generic";
+            string category = GetRowValue(row, "Category", "ItmsGrpNam")?.ToString() ?? "General";
+            string rawImage = GetRowValue(row, "Image", "PictName")?.ToString() ?? "";
+            string ean = GetRowValue(row, "Ean", "CodeBars")?.ToString() ?? "";
+            string oe = GetRowValue(row, "Oe", "SWW")?.ToString() ?? "";
+            string comp = GetRowValue(row, "Compatibility", "UserText")?.ToString() ?? "";
 
-            if (id == 0)
+            object idVal = GetRowValue(row, "Id", "DocEntry");
+            int id = 0;
+            if (idVal != null)
+            {
+                int.TryParse(idVal.ToString(), out id);
+            }
+            if (id == 0 && !string.IsNullOrEmpty(code))
             {
                 id = Math.Abs(code.GetHashCode());
             }
+
+            object moqVal = GetRowValue(row, "Moq", "MinOrdrQty");
+            int moq = 1;
+            if (moqVal != null) int.TryParse(moqVal.ToString(), out moq);
+            if (moq <= 0) moq = 1;
+
+            object priceVal = GetRowValue(row, "Price");
+            decimal price = 0m;
+            if (priceVal != null) decimal.TryParse(priceVal.ToString(), out price);
+
+            object sharjahVal = GetRowValue(row, "SharjahStock", "OnHand");
+            int sharjah = 0;
+            if (sharjahVal != null) int.TryParse(sharjahVal.ToString(), out sharjah);
+
+            object jebelVal = GetRowValue(row, "JebelStock");
+            int jebel = 0;
+            if (jebelVal != null) int.TryParse(jebelVal.ToString(), out jebel);
+
+            object transitVal = GetRowValue(row, "TransitStock", "Transit");
+            int transit = 0;
+            if (transitVal != null) int.TryParse(transitVal.ToString(), out transit);
 
             string assetImage = GetAssetImageForProduct(rawImage, title, category, code, id);
 
@@ -193,15 +248,15 @@ LIMIT 100";
                 Title = title,
                 Brand = brand,
                 Category = category,
-                Ean = row["Ean"]?.ToString() ?? "",
-                Oe = row["Oe"]?.ToString() ?? "",
+                Ean = ean,
+                Oe = oe,
                 Image = assetImage,
-                Compatibility = row["Compatibility"]?.ToString() ?? "",
-                Moq = Convert.ToInt32(row["Moq"] != DBNull.Value ? row["Moq"] : 1),
-                Price = Convert.ToDecimal(row["Price"] != DBNull.Value ? row["Price"] : 0m),
-                SharjahStock = Convert.ToInt32(row["SharjahStock"] != DBNull.Value ? row["SharjahStock"] : 0),
-                JebelStock = Convert.ToInt32(row["JebelStock"] != DBNull.Value ? row["JebelStock"] : 0),
-                TransitStock = Convert.ToInt32(row["TransitStock"] != DBNull.Value ? row["TransitStock"] : 0),
+                Compatibility = comp,
+                Moq = moq,
+                Price = price,
+                SharjahStock = sharjah,
+                JebelStock = jebel,
+                TransitStock = transit,
                 IsOffer = false
             };
 
