@@ -92,7 +92,7 @@ namespace SumarAuto.Client
 
 
 
-            public bool ValidateUserCredentials()
+            public bool ValidateUserCredentials(Models.LoginVM model)
             {
                 try
                 {

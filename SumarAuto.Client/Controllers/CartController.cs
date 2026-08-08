@@ -49,7 +49,7 @@ namespace SumarAuto.Client.Controllers
             int userId = GetUserId();
             var cart = _cartRepository.GetCart(userId);
             var stats = _productRepository.GetSummaryStats();
-            var currentUser = Session["CurrentUser"] as User ?? _userRepository.GetUserById(1);
+            var currentUser = Session["CurrentUser"] as User ?? new User { Id = 1, Username = "SAP_User", EmailId = "" };
 
             ViewBag.Stats = stats;
             ViewBag.CurrentUser = currentUser;
@@ -98,7 +98,7 @@ namespace SumarAuto.Client.Controllers
             ViewBag.CurrentNav = "Cart";
 
             var stats = _productRepository.GetSummaryStats();
-            var currentUser = Session["CurrentUser"] as User ?? _userRepository.GetUserById(1);
+            var currentUser = Session["CurrentUser"] as User ?? new User { Id = 1, Username = "SAP_User", EmailId = "" };
 
             ViewBag.Stats = stats;
             ViewBag.CurrentUser = currentUser;
@@ -117,7 +117,7 @@ namespace SumarAuto.Client.Controllers
                 return RedirectToAction("Index");
             }
 
-            var currentUser = Session["CurrentUser"] as User ?? _userRepository.GetUserById(1);
+            var currentUser = Session["CurrentUser"] as User ?? new User { Id = 1, Username = "SAP_User", EmailId = "" };
 
             var orderNumber = "PO-2026-" + new Random().Next(10000, 99999);
             var order = new Order

@@ -4,9 +4,6 @@ namespace SumarAuto.Data.Interfaces
 {
     public interface IUserRepository
     {
-        User Authenticate(string emailOrAccount, string password);
-        bool Register(User newUser, out string errorMessage);
-        User GetUserByEmail(string email);
-        User GetUserById(int id);
+        User Authenticate(string username, string password);
     }
 }

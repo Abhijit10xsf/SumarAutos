@@ -28,3 +28,7 @@ D:\Abhijit_S\SumarAutos\SumarAuto.Data\obj\Debug\SumarAuto.Data.csproj.CoreCompi
 D:\Abhijit_S\SumarAutos\SumarAuto.Data\obj\Debug\SumarAut.D8C7DAB3.Up2Date
 D:\Abhijit_S\SumarAutos\SumarAuto.Data\obj\Debug\SumarAuto.Data.dll
 D:\Abhijit_S\SumarAutos\SumarAuto.Data\obj\Debug\SumarAuto.Data.pdb
+D:\SumarAuto\SumarAuto.Data\bin\Debug\Sap.Data.Hana.v4.5.dll
+D:\SumarAuto\SumarAuto.Data\bin\Debug\Sap.Data.Hana.v4.5.pdb
+D:\SumarAuto\SumarAuto.Data\bin\Debug\Sap.Data.Hana.v4.5.xml
+D:\SumarAuto\SumarAuto.Data\bin\Debug\Sap.Data.Hana.v4.5.dll.config

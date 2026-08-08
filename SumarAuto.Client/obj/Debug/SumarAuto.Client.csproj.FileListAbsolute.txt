@@ -200,3 +200,7 @@ D:\Abhijit_S\SumarAutos\SumarAuto.Client\obj\Debug\SumarAuto.Client.csproj.CoreC
 D:\Abhijit_S\SumarAutos\SumarAuto.Client\obj\Debug\SumarAut.9BF22E6A.Up2Date
 D:\Abhijit_S\SumarAutos\SumarAuto.Client\obj\Debug\SumarAuto.Client.dll
 D:\Abhijit_S\SumarAutos\SumarAuto.Client\obj\Debug\SumarAuto.Client.pdb
+D:\SumarAuto\SumarAuto.Client\bin\Sap.Data.Hana.v4.5.dll
+D:\SumarAuto\SumarAuto.Client\bin\Sap.Data.Hana.v4.5.pdb
+D:\SumarAuto\SumarAuto.Client\bin\Sap.Data.Hana.v4.5.xml
+D:\SumarAuto\SumarAuto.Client\bin\Sap.Data.Hana.v4.5.dll.config
