@@ -77,12 +77,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
@@ -107,7 +103,7 @@
               "RelativeDocumentMoniker": "..\\SumarAuto.Data\\Repositories\\UserRepository.cs",
               "ToolTip": "D:\\SumarAuto\\SumarAuto.Data\\Repositories\\UserRepository.cs",
               "RelativeToolTip": "..\\SumarAuto.Data\\Repositories\\UserRepository.cs",
-              "ViewState": "AgIAAL0AAAAAAAAAAAAQwMsAAABGAAAAAAAAAA==",
+              "ViewState": "AgIAAL0AAAAAAAAAAAAywMsAAABGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-08T06:08:07.606Z",
               "EditorCaption": ""
@@ -122,8 +118,7 @@
               "RelativeToolTip": "..\\SumarAuto.Data\\Repositories\\ProductRepository.cs",
               "ViewState": "AgIAAGkAAAAAAAAAAAAQwA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-08T06:07:08.449Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-08T06:07:08.449Z"
             },
             {
               "$type": "Document",
