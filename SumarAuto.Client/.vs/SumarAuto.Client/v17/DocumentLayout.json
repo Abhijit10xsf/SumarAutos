@@ -1,22 +1,26 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\SumarAuto\\SumarAuto.Client\\",
+  "WorkspaceRootPath": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|d:\\sumarauto\\sumarauto.client\\saprestservicelayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|solutionrelative:saprestservicelayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|D:\\SumarAuto\\SumarAuto.Client\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|solutionrelative:views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|D:\\SumarAuto\\SumarAuto.Client\\models\\loginvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|solutionrelative:models\\loginvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|d:\\abhijit_s\\sumarautos\\sumarauto.client\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|solutionrelative:web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|D:\\SumarAuto\\SumarAuto.Client\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|d:\\abhijit_s\\sumarautos\\sumarauto.client\\saprestservicelayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|solutionrelative:saprestservicelayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\models\\loginvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4873AD90-F494-47FA-84DB-C7B52FE7E496}|SumarAuto.Client.csproj|solutionrelative:models\\loginvm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,54 +50,67 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Web.config",
+              "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Web.config",
+              "RelativeDocumentMoniker": "Web.config",
+              "ToolTip": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Web.config",
+              "RelativeToolTip": "Web.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2026-08-08T08:10:38.752Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Login.cshtml",
-              "DocumentMoniker": "D:\\SumarAuto\\SumarAuto.Client\\Views\\Account\\Login.cshtml",
+              "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Views\\Account\\Login.cshtml",
               "RelativeDocumentMoniker": "Views\\Account\\Login.cshtml",
-              "ToolTip": "D:\\SumarAuto\\SumarAuto.Client\\Views\\Account\\Login.cshtml",
+              "ToolTip": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Views\\Account\\Login.cshtml",
               "RelativeToolTip": "Views\\Account\\Login.cshtml",
-              "ViewState": "AgIAABEBAAAAAAAAAAAAABoBAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAABEBAAAAAAAAAAAAACMBAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-08-08T07:25:20.745Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "LoginVM.cs",
-              "DocumentMoniker": "D:\\SumarAuto\\SumarAuto.Client\\Models\\LoginVM.cs",
+              "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Models\\LoginVM.cs",
               "RelativeDocumentMoniker": "Models\\LoginVM.cs",
-              "ToolTip": "D:\\SumarAuto\\SumarAuto.Client\\Models\\LoginVM.cs",
+              "ToolTip": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Models\\LoginVM.cs",
               "RelativeToolTip": "Models\\LoginVM.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-08T07:22:59.738Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-08T07:22:59.738Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "SAPRestServiceLayer.cs",
-              "DocumentMoniker": "D:\\SumarAuto\\SumarAuto.Client\\SAPRestServiceLayer.cs",
+              "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\SAPRestServiceLayer.cs",
               "RelativeDocumentMoniker": "SAPRestServiceLayer.cs",
-              "ToolTip": "D:\\SumarAuto\\SumarAuto.Client\\SAPRestServiceLayer.cs",
+              "ToolTip": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\SAPRestServiceLayer.cs",
               "RelativeToolTip": "SAPRestServiceLayer.cs",
-              "ViewState": "AgIAAGMAAAAAAAAAAADwv3AAAABKAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-08T05:47:22.741Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "AccountController.cs",
-              "DocumentMoniker": "D:\\SumarAuto\\SumarAuto.Client\\Controllers\\AccountController.cs",
+              "DocumentMoniker": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
-              "ToolTip": "D:\\SumarAuto\\SumarAuto.Client\\Controllers\\AccountController.cs",
+              "ToolTip": "D:\\Abhijit_S\\SumarAutos\\SumarAuto.Client\\Controllers\\AccountController.cs",
               "RelativeToolTip": "Controllers\\AccountController.cs",
-              "ViewState": "AgIAACAAAAAAAAAAAAAowBcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABgAAAAAQGZmZmbevzQAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-07T11:24:58.028Z"
+              "WhenOpened": "2026-08-07T11:24:58.028Z",
+              "EditorCaption": ""
             }
           ]
         }
