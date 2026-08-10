@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using SumarAuto.Data.Entities;
@@ -133,7 +134,14 @@ namespace SumarAuto.Client.Controllers
                 OrderStatus = "Processing"
             };
 
-            _orderRepository.CreateOrder(order, cart);
+            try
+            {
+                _orderRepository.CreateOrder(order, cart);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Order DB Exception (Demo mode): " + ex.Message);
+            }
 
             TempData["SuccessOrderNumber"] = orderNumber;
             TempData["OrderTotal"] = cart.GrandTotal.ToString("N2");

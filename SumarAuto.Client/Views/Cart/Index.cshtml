@@ -38,7 +38,7 @@
         </div>
     }
 
-    @if (Model.Items.Count == 0)
+    @if (Model == null || Model.Items.Count == 0)
     {
         <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4">
             <div class="card-body">
@@ -226,29 +226,29 @@
 </main>
 
 @section Scripts {
-<script>
-    $(document).ready(function () {
-        $('.btn-minus').on('click', function () {
-            var form = $(this).closest('form');
-            var input = form.find('.qty-field');
-            var min = parseInt(input.attr('min')) || 1;
-            var step = parseInt(input.attr('step')) || 1;
-            var val = parseInt(input.val()) || min;
-            if (val > min) {
-                input.val(val - step);
-                form.submit();
-            }
-        });
+    <script>
+        $(document).ready(function () {
+            $('.btn-minus').on('click', function () {
+                var form = $(this).closest('form');
+                var input = form.find('.qty-field');
+                var min = parseInt(input.attr('min')) || 1;
+                var step = parseInt(input.attr('step')) || 1;
+                var val = parseInt(input.val()) || min;
+                if (val > min) {
+                    input.val(val - step);
+                    form.submit();
+                }
+            });
 
-        $('.btn-plus').on('click', function () {
-            var form = $(this).closest('form');
-            var input = form.find('.qty-field');
-            var min = parseInt(input.attr('min')) || 1;
-            var step = parseInt(input.attr('step')) || 1;
-            var val = parseInt(input.val()) || min;
-            input.val(val + step);
-            form.submit();
+            $('.btn-plus').on('click', function () {
+                var form = $(this).closest('form');
+                var input = form.find('.qty-field');
+                var min = parseInt(input.attr('min')) || 1;
+                var step = parseInt(input.attr('step')) || 1;
+                var val = parseInt(input.val()) || min;
+                input.val(val + step);
+                form.submit();
+            });
         });
-    });
-</script>
+    </script>
 }

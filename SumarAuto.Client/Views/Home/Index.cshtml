@@ -187,7 +187,19 @@
             <div id="productGrid" class="row g-3">
                 @foreach (var product in Model.Products)
                 {
-                    <div class="product-col col-md-6 col-xxl-4" data-product-id="@product.Id">
+                    <div class="product-col col-md-6 col-xxl-4"
+                         data-product-id="@product.Id"
+                         data-code="@product.Code"
+                         data-title="@product.Title"
+                         data-brand="@product.Brand"
+                         data-category="@product.Category"
+                         data-price="@product.Price"
+                         data-image="@product.Image"
+                         data-moq="@product.Moq"
+                         data-sharjah="@product.SharjahStock"
+                         data-jebel="@product.JebelStock"
+                         data-oe="@product.Oe"
+                         data-ean="@product.Ean">
                         <article class="product-card">
                             <div class="product-image-wrap">
                                 @if (product.IsOffer)
@@ -288,7 +300,7 @@
 </div>
 
 @section Scripts {
-<script>
+    <script>
     var listMode = false;
 
     function renderProductHtml(p) {
@@ -299,7 +311,19 @@
             });
         }
 
-        return '<div class="product-col col-md-6 col-xxl-4 ' + (listMode ? 'list-mode' : '') + '" data-product-id="' + p.id + '">' +
+        return '<div class="product-col col-md-6 col-xxl-4 ' + (listMode ? 'list-mode' : '') + '" ' +
+            'data-product-id="' + p.id + '" ' +
+            'data-code="' + (p.code || '') + '" ' +
+            'data-title="' + (p.title || '') + '" ' +
+            'data-brand="' + (p.brand || '') + '" ' +
+            'data-category="' + (p.category || '') + '" ' +
+            'data-price="' + p.price + '" ' +
+            'data-image="' + (p.image || '') + '" ' +
+            'data-moq="' + p.moq + '" ' +
+            'data-sharjah="' + p.sharjah + '" ' +
+            'data-jebel="' + p.jebel + '" ' +
+            'data-oe="' + (p.oe || '') + '" ' +
+            'data-ean="' + (p.ean || '') + '">' +
             '<article class="product-card">' +
             '<div class="product-image-wrap">' +
             (p.offer ? '<span class="offer-badge badge text-bg-danger">Special offer</span>' : '') +
@@ -401,16 +425,27 @@
             });
 
             col.find('.add-cart-btn').off('click').on('click', function () {
+                var btn = $(this);
+                var originalHtml = btn.html();
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> Adding...');
                 var qty = parseInt(qtyInput.val()) || moq;
+
                 $.ajax({
                     url: '@Url.Action("AddToCartJson", "Home")',
                     type: 'POST',
                     data: { productId: productId, quantity: qty },
                     success: function (res) {
+                        btn.prop('disabled', false).html('<i class="bi bi-check-lg me-1"></i> Added!').removeClass('btn-danger').addClass('btn-success');
+                        setTimeout(function () {
+                            btn.html(originalHtml).removeClass('btn-success').addClass('btn-danger');
+                        }, 1200);
                         if (res.success) {
                             updateGlobalCartUi(res.cart);
                             showCartToast('Item added to wholesale cart.');
                         }
+                    },
+                    error: function () {
+                        btn.prop('disabled', false).html(originalHtml);
                     }
                 });
             });
@@ -492,5 +527,5 @@
             fetchAndRenderProducts();
         });
     });
-</script>
+    </script>
 }

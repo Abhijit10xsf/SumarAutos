@@ -30,9 +30,11 @@
             color: #fff !important;
             background: rgba(255,255,255,.15) !important;
         }
+
         .user-dropdown .dropdown-toggle::after {
             display: none;
         }
+
         .badge-b2b {
             background-color: var(--brand);
         }
@@ -209,7 +211,7 @@
     <script src="~/Content/assets/vendor/bootstrap.bundle.min.js"></script>
     <script>
         function formatMoney(value) {
-            return 'AED ' + Number(value).toFixed(2);
+            return 'AED ' + Number(value || 0).toFixed(2);
         }
 
         function removeGlobalCartItem(productId) {
@@ -220,9 +222,6 @@
                 success: function (res) {
                     if (res.success) {
                         updateGlobalCartUi(res.cart);
-                        if (typeof refreshCartPage === 'function') {
-                            refreshCartPage();
-                        }
                     }
                 }
             });
@@ -257,8 +256,10 @@
         function showCartToast(msg) {
             if (msg) $('#toastMessage').text(msg);
             var toastEl = document.getElementById('cartToast');
-            var toast = new bootstrap.Toast(toastEl);
-            toast.show();
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
         }
     </script>
     @RenderSection("Scripts", required: false)

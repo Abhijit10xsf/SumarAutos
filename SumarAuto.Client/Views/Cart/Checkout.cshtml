@@ -207,7 +207,7 @@
                             <span class="h3 mb-0 fw-bold text-danger">AED @Model.GrandTotal.ToString("F2")</span>
                         </div>
 
-                        <button type="submit" class="btn btn-danger btn-lg w-100 py-3 fw-bold rounded-3 shadow">
+                        <button type="submit" id="btnPlaceOrder" class="btn btn-danger btn-lg w-100 py-3 fw-bold rounded-3 shadow">
                             <i class="bi bi-check2-circle me-2"></i> Place Wholesale Order
                         </button>
 
@@ -220,3 +220,14 @@
         </div>
     }
 </main>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#checkoutForm').on('submit', function () {
+                var btn = $('#btnPlaceOrder');
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status"></span> Submitting Wholesale Order...');
+            });
+        });
+    </script>
+}

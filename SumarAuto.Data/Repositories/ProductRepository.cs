@@ -13,6 +13,19 @@ namespace SumarAuto.Data.Repositories
         private readonly SumarDbContext _db;
         private readonly HanaDataHelper _hanaHelper;
 
+        private static readonly object CacheLock = new object();
+        private static List<Product> _cachedProducts = null;
+        private static Dictionary<int, Product> _cachedProductsById = null;
+        private static DateTime _lastProductCacheTime = DateTime.MinValue;
+        private static readonly TimeSpan ProductCacheTtl = TimeSpan.FromMinutes(5);
+
+        private static List<string> _cachedCategories = null;
+        private static DateTime _lastCategoryCacheTime = DateTime.MinValue;
+
+        private static List<string> _cachedBrands = null;
+        private static DateTime _lastBrandCacheTime = DateTime.MinValue;
+        private static readonly TimeSpan MetaCacheTtl = TimeSpan.FromMinutes(15);
+
         public ProductRepository()
         {
             _db = new SumarDbContext();
@@ -25,34 +38,83 @@ namespace SumarAuto.Data.Repositories
             _hanaHelper = new HanaDataHelper();
         }
 
-        public IEnumerable<Product> GetAllProducts(ProductFilter filter = null)
+        public static void InvalidateCache()
         {
-            try
+            lock (CacheLock)
             {
-                var hanaProducts = GetProductsFromHana(filter);
-                if (hanaProducts != null && hanaProducts.Count > 0)
-                {
-                    return hanaProducts.Take(100);
-                }
+                _cachedProducts = null;
+                _cachedProductsById = null;
+                _cachedCategories = null;
+                _cachedBrands = null;
+                _lastProductCacheTime = DateTime.MinValue;
+                _lastCategoryCacheTime = DateTime.MinValue;
+                _lastBrandCacheTime = DateTime.MinValue;
             }
-            catch (Exception ex)
+        }
+
+        private List<Product> GetOrLoadProducts()
+        {
+            if (_cachedProducts != null && (DateTime.Now - _lastProductCacheTime) < ProductCacheTtl)
             {
-                System.Diagnostics.Debug.WriteLine("HANA Query Exception: " + ex.Message);
+                return _cachedProducts;
             }
 
-            return new List<Product>();
+            lock (CacheLock)
+            {
+                if (_cachedProducts != null && (DateTime.Now - _lastProductCacheTime) < ProductCacheTtl)
+                {
+                    return _cachedProducts;
+                }
+
+                List<Product> products = null;
+                try
+                {
+                    products = GetProductsFromHanaRaw();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("HANA Query Exception: " + ex.Message);
+                }
+
+                if (products == null || products.Count == 0)
+                {
+                    products = GetProductsFromLocalDb(null);
+                }
+
+                _cachedProducts = products ?? new List<Product>();
+
+                var dict = new Dictionary<int, Product>();
+                foreach (var p in _cachedProducts)
+                {
+                    dict[p.Id] = p;
+                }
+                _cachedProductsById = dict;
+
+                _lastProductCacheTime = DateTime.Now;
+                return _cachedProducts;
+            }
+        }
+
+        public IEnumerable<Product> GetAllProducts(ProductFilter filter = null)
+        {
+            var baseProducts = GetOrLoadProducts();
+            return ApplyFilter(baseProducts, filter).Take(100);
         }
 
         public Product GetProductById(int id)
         {
-            var products = GetAllProducts();
-            return products?.FirstOrDefault(p => p.Id == id);
+            var baseProducts = GetOrLoadProducts();
+            if (_cachedProductsById != null && _cachedProductsById.TryGetValue(id, out var product))
+            {
+                return product;
+            }
+            return baseProducts?.FirstOrDefault(p => p.Id == id);
         }
 
         public SummaryStats GetSummaryStats()
         {
             var stats = new SummaryStats();
-            var products = GetAllProducts().ToList();
+            var products = GetOrLoadProducts();
             stats.AvailableProducts = products.Count;
             stats.ReadyStock = products.Sum(p => p.SharjahStock + p.JebelStock);
             stats.InTransit = products.Sum(p => p.TransitStock);
@@ -62,49 +124,77 @@ namespace SumarAuto.Data.Repositories
 
         public List<string> GetCategories()
         {
-            try
+            if (_cachedCategories != null && (DateTime.Now - _lastCategoryCacheTime) < MetaCacheTtl)
             {
-                string query = @"SELECT DISTINCT ""ItmsGrpNam"" FROM ""OITB"" WHERE ""ItmsGrpNam"" IS NOT NULL ORDER BY ""ItmsGrpNam""";
-                DataTable dt = _hanaHelper.ExecuteDataTable(query);
-                if (dt != null && dt.Rows.Count > 0)
-                {
-                    List<string> categories = new List<string>();
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        var cat = row[0]?.ToString();
-                        if (!string.IsNullOrWhiteSpace(cat)) categories.Add(cat);
-                    }
-                    return categories;
-                }
+                return _cachedCategories;
             }
-            catch { }
 
-            return new List<string>();
+            lock (CacheLock)
+            {
+                if (_cachedCategories != null && (DateTime.Now - _lastCategoryCacheTime) < MetaCacheTtl)
+                {
+                    return _cachedCategories;
+                }
+
+                List<string> categories = new List<string>();
+                try
+                {
+                    string query = @"SELECT DISTINCT ""ItmsGrpNam"" FROM ""OITB"" WHERE ""ItmsGrpNam"" IS NOT NULL ORDER BY ""ItmsGrpNam""";
+                    DataTable dt = _hanaHelper.ExecuteDataTable(query);
+                    if (dt != null && dt.Rows.Count > 0)
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            var cat = row[0]?.ToString();
+                            if (!string.IsNullOrWhiteSpace(cat)) categories.Add(cat);
+                        }
+                    }
+                }
+                catch { }
+
+                _cachedCategories = categories;
+                _lastCategoryCacheTime = DateTime.Now;
+                return _cachedCategories;
+            }
         }
 
         public List<string> GetBrands()
         {
-            try
+            if (_cachedBrands != null && (DateTime.Now - _lastBrandCacheTime) < MetaCacheTtl)
             {
-                string query = @"SELECT DISTINCT ""FirmName"" FROM ""OMRC"" WHERE ""FirmName"" IS NOT NULL ORDER BY ""FirmName""";
-                DataTable dt = _hanaHelper.ExecuteDataTable(query);
-                if (dt != null && dt.Rows.Count > 0)
-                {
-                    List<string> brands = new List<string>();
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        var brand = row[0]?.ToString();
-                        if (!string.IsNullOrWhiteSpace(brand)) brands.Add(brand);
-                    }
-                    return brands;
-                }
+                return _cachedBrands;
             }
-            catch { }
 
-            return new List<string>();
+            lock (CacheLock)
+            {
+                if (_cachedBrands != null && (DateTime.Now - _lastBrandCacheTime) < MetaCacheTtl)
+                {
+                    return _cachedBrands;
+                }
+
+                List<string> brands = new List<string>();
+                try
+                {
+                    string query = @"SELECT DISTINCT ""FirmName"" FROM ""OMRC"" WHERE ""FirmName"" IS NOT NULL ORDER BY ""FirmName""";
+                    DataTable dt = _hanaHelper.ExecuteDataTable(query);
+                    if (dt != null && dt.Rows.Count > 0)
+                    {
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            var brand = row[0]?.ToString();
+                            if (!string.IsNullOrWhiteSpace(brand)) brands.Add(brand);
+                        }
+                    }
+                }
+                catch { }
+
+                _cachedBrands = brands;
+                _lastBrandCacheTime = DateTime.Now;
+                return _cachedBrands;
+            }
         }
 
-        private List<Product> GetProductsFromHana(ProductFilter filter)
+        private List<Product> GetProductsFromHanaRaw()
         {
             string query = @"
 SELECT 
@@ -166,8 +256,7 @@ LIMIT 100";
                 }
             }
 
-            // Apply filter logic in memory
-            return ApplyFilter(products, filter);
+            return products;
         }
 
         private static object GetRowValue(DataRow row, params string[] names)
