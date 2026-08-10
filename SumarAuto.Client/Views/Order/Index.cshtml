@@ -122,49 +122,67 @@
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h2 class="h5 mb-0 fw-bold text-dark"><i class="bi bi-clock-history text-danger me-2"></i> Order History (@ordersList.Count)</h2>
             <div class="small text-muted">
-                Showing <strong>@Math.Min(2, ordersList.Count)</strong> default order(s) for <strong>@currentUser.CompanyName</strong>
+                Click <strong>Details</strong> to view items for any order
             </div>
         </div>
 
-        <div class="d-flex flex-column gap-4">
+        <div class="d-flex flex-column gap-3">
             @for (int index = 0; index < ordersList.Count; index++)
             {
                 var order = ordersList[index];
                 var statusClass = order.OrderStatus == "Delivered" ? "bg-success" : (order.OrderStatus == "Processing" ? "bg-warning text-dark" : "bg-primary");
-                var isDefaultOrder = index < 2;
 
                 <div class="card border-0 shadow-sm rounded-4 overflow-hidden order-card">
-                    <!-- Order Header Banner -->
-                    <div class="card-header bg-white p-3 p-md-4 border-bottom">
+                    <!-- Order Header Banner (Only Order No, Total Items Amount, and Details button) -->
+                    <div class="card-header bg-white p-3 p-md-4 border-0">
                         <div class="row align-items-center g-3">
+                            <!-- 1. Order No -->
                             <div class="col-md-4 col-sm-6">
+                                <div class="small text-muted mb-1">Order No</div>
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="badge bg-danger-subtle text-danger fw-bold fs-6 px-3 py-2 rounded-3">
                                         <i class="bi bi-hash"></i>@order.OrderNumber
                                     </span>
+                                </div>
+                            </div>
+
+                            <!-- 2. Total Items Amount -->
+                            <div class="col-md-4 col-sm-6 text-sm-start text-md-center">
+                                <div class="small text-muted mb-1">Total Items Amount</div>
+                                <div class="h4 fw-bold text-danger mb-0">AED @order.GrandTotal.ToString("N2")</div>
+                            </div>
+
+                            <!-- 3. Details Button -->
+                            <div class="col-md-4 col-12 text-md-end">
+                                <button class="btn btn-outline-danger btn-sm rounded-3 px-4 py-2 fw-bold order-details-toggle"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#orderCollapse_@order.Id"
+                                        aria-expanded="false"
+                                        aria-controls="orderCollapse_@order.Id">
+                                    <i class="bi bi-list-task me-1"></i> Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible Order Details Body (Hidden by default, shown on click) -->
+                    <div class="collapse" id="orderCollapse_@order.Id">
+                        <div class="card-body p-0 border-top">
+                            <!-- Order Info Banner inside details view -->
+                            <div class="bg-light p-3 px-md-4 border-bottom d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <div class="d-flex align-items-center gap-3 flex-wrap">
                                     <span class="badge @statusClass px-3 py-2 rounded-pill fw-semibold">
-                                        <i class="bi bi-info-circle me-1"></i>@order.OrderStatus
+                                        <i class="bi bi-info-circle me-1"></i> Status: @order.OrderStatus
+                                    </span>
+                                    <span class="small text-muted">
+                                        <i class="bi bi-calendar-event me-1"></i> Placed on <strong>@order.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</strong>
+                                    </span>
+                                    <span class="small text-muted">
+                                        <i class="bi bi-truck me-1 text-primary"></i> @(string.IsNullOrEmpty(order.FulfillmentMethod) ? "Standard Delivery" : order.FulfillmentMethod)
                                     </span>
                                 </div>
-                                <div class="small text-muted mt-2">
-                                    <i class="bi bi-calendar-event me-1"></i> Placed on <strong>@order.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</strong>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4 col-sm-6 text-md-center">
-                                <div class="small text-muted">Fulfillment / Payment Terms</div>
-                                <div class="fw-semibold text-dark text-truncate">
-                                    <i class="bi bi-truck me-1 text-primary"></i> @(string.IsNullOrEmpty(order.FulfillmentMethod) ? "Standard Delivery" : order.FulfillmentMethod)
-                                </div>
-                                <div class="small text-muted text-truncate">
-                                    <i class="bi bi-credit-card me-1 text-success"></i> @(string.IsNullOrEmpty(order.PaymentMethod) ? "Wholesale Credit Account" : order.PaymentMethod)
-                                </div>
-                            </div>
-
-                            <div class="col-md-4 col-12 text-md-end">
-                                <div class="small text-muted">Grand Total (incl. 5% VAT)</div>
-                                <div class="h4 fw-bold text-danger mb-2">AED @order.GrandTotal.ToString("N2")</div>
-                                <div class="d-flex gap-2 justify-content-md-end">
+                                <div>
                                     @using (Html.BeginForm("Reorder", "Order", FormMethod.Post, new { @class = "d-inline" }))
                                     {
                                         <input type="hidden" name="orderId" value="@order.Id" />
@@ -172,25 +190,17 @@
                                             <i class="bi bi-arrow-repeat me-1"></i> Reorder All Items
                                         </button>
                                     }
-                                    <button class="btn btn-outline-secondary btn-sm rounded-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#orderCollapse_@order.Id" aria-expanded="true" aria-controls="orderCollapse_@order.Id">
-                                        <i class="bi bi-list-task me-1"></i> Toggle Details
-                                    </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Collapsible Order Details Body -->
-                    <div class="collapse show" id="orderCollapse_@order.Id">
-                        <div class="card-body p-0">
                             @if (!string.IsNullOrEmpty(order.Notes))
                             {
-                                <div class="bg-light px-4 py-2 border-bottom small text-muted">
+                                <div class="bg-light-subtle px-4 py-2 border-bottom small text-muted">
                                     <i class="bi bi-sticky me-1 text-warning"></i> <strong>Order Notes:</strong> @order.Notes
                                 </div>
                             }
 
-                            <!-- Itemized Table -->
+                            <!-- Itemized Table showing all items of this order -->
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="table-light">
@@ -273,7 +283,7 @@
                                         <small class="text-muted d-block">VAT (5%): <strong>AED @order.VatAmount.ToString("N2")</strong></small>
                                     </div>
                                     <div class="border-start ps-3 text-end">
-                                        <small class="text-muted d-block">Grand Total</small>
+                                        <small class="text-muted d-block">Total Items Amount</small>
                                         <strong class="h5 fw-bold text-danger mb-0">AED @order.GrandTotal.ToString("N2")</strong>
                                     </div>
                                 </div>
