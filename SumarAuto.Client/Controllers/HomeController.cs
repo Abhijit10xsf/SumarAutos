@@ -70,7 +70,7 @@ namespace SumarAuto.Client.Controllers
                 title = p.Title,
                 brand = p.Brand,
                 category = p.Category,
-                image = p.Image,
+                image = Url.Content(p.Image),
                 ean = p.Ean,
                 oe = p.Oe,
                 compatibility = p.Compatibility,

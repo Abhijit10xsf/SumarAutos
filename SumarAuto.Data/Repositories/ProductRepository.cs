@@ -356,34 +356,39 @@ LIMIT 100";
         {
             if (!string.IsNullOrWhiteSpace(rawImage) &&
                 (rawImage.StartsWith("/Content/assets/", StringComparison.OrdinalIgnoreCase) ||
+                 rawImage.StartsWith("~/Content/assets/", StringComparison.OrdinalIgnoreCase) ||
                  rawImage.StartsWith("http", StringComparison.OrdinalIgnoreCase)))
             {
+                if (rawImage.StartsWith("/Content/assets/", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "~" + rawImage;
+                }
                 return rawImage;
             }
 
             string search = $"{title} {category} {code}".ToLowerInvariant();
 
             if (search.Contains("filter") || search.Contains("air") || search.Contains("oil") || search.Contains("fuel"))
-                return "/Content/assets/img/air-filter.svg";
+                return "~/Content/assets/img/air-filter.svg";
             if (search.Contains("brake") || search.Contains("pad") || search.Contains("disc") || search.Contains("shoe") || search.Contains("caliper"))
-                return "/Content/assets/img/brake-pad.svg";
+                return "~/Content/assets/img/brake-pad.svg";
             if (search.Contains("plug") || search.Contains("spark") || search.Contains("ignition") || search.Contains("sensor") || search.Contains("coil") || search.Contains("elec"))
-                return "/Content/assets/img/spark-plug.svg";
+                return "~/Content/assets/img/spark-plug.svg";
             if (search.Contains("bearing") || search.Contains("wheel") || search.Contains("suspension") || search.Contains("arm") || search.Contains("joint") || search.Contains("strut") || search.Contains("shock"))
-                return "/Content/assets/img/bearing.svg";
+                return "~/Content/assets/img/bearing.svg";
             if (search.Contains("belt") || search.Contains("rib") || search.Contains("drive") || search.Contains("timing") || search.Contains("chain"))
-                return "/Content/assets/img/drive-belt.svg";
+                return "~/Content/assets/img/drive-belt.svg";
             if (search.Contains("seal") || search.Contains("ring") || search.Contains("gasket") || search.Contains("o-ring") || search.Contains("washer"))
-                return "/Content/assets/img/seal-ring.svg";
+                return "~/Content/assets/img/seal-ring.svg";
 
             string[] assetImages = new string[]
             {
-                "/Content/assets/img/air-filter.svg",
-                "/Content/assets/img/brake-pad.svg",
-                "/Content/assets/img/spark-plug.svg",
-                "/Content/assets/img/bearing.svg",
-                "/Content/assets/img/drive-belt.svg",
-                "/Content/assets/img/seal-ring.svg"
+                "~/Content/assets/img/air-filter.svg",
+                "~/Content/assets/img/brake-pad.svg",
+                "~/Content/assets/img/spark-plug.svg",
+                "~/Content/assets/img/bearing.svg",
+                "~/Content/assets/img/drive-belt.svg",
+                "~/Content/assets/img/seal-ring.svg"
             };
 
             int index = Math.Abs(id) % assetImages.Length;

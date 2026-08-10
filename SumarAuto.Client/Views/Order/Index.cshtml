@@ -216,35 +216,35 @@
                                         {
                                             foreach (var item in order.Details)
                                             {
-                                                var imgUrl = "/Content/assets/img/brake-pad.svg";
+                                                var imgUrl = "~/Content/assets/img/brake-pad.svg";
                                                 var codeLower = (item.ProductCode ?? "").ToLower();
                                                 var titleLower = (item.ProductTitle ?? "").ToLower();
 
                                                 if (codeLower.Contains("of") || titleLower.Contains("oil") || titleLower.Contains("filter") || codeLower.Contains("af"))
                                                 {
-                                                    imgUrl = "/Content/assets/img/air-filter.svg";
+                                                    imgUrl = "~/Content/assets/img/air-filter.svg";
                                                 }
                                                 else if (codeLower.Contains("spk") || titleLower.Contains("spark") || titleLower.Contains("plug"))
                                                 {
-                                                    imgUrl = "/Content/assets/img/spark-plug.svg";
+                                                    imgUrl = "~/Content/assets/img/spark-plug.svg";
                                                 }
                                                 else if (codeLower.Contains("cb") || titleLower.Contains("battery"))
                                                 {
-                                                    imgUrl = "/Content/assets/img/bearing.svg";
+                                                    imgUrl = "~/Content/assets/img/bearing.svg";
                                                 }
                                                 else if (titleLower.Contains("belt"))
                                                 {
-                                                    imgUrl = "/Content/assets/img/drive-belt.svg";
+                                                    imgUrl = "~/Content/assets/img/drive-belt.svg";
                                                 }
                                                 else if (titleLower.Contains("seal") || titleLower.Contains("gasket"))
                                                 {
-                                                    imgUrl = "/Content/assets/img/seal-ring.svg";
+                                                    imgUrl = "~/Content/assets/img/seal-ring.svg";
                                                 }
 
                                                 <tr>
                                                     <td class="ps-4 py-3">
                                                         <div class="d-flex align-items-center gap-3">
-                                                            <img src="@imgUrl" alt="@item.ProductTitle" class="rounded-3 border p-1" style="width: 52px; height: 52px; object-fit: contain; background: #f8f9fa;">
+                                                            <img src="@Url.Content(imgUrl)" alt="@item.ProductTitle" class="rounded-3 border p-1" style="width: 52px; height: 52px; object-fit: contain; background: #f8f9fa;">
                                                             <div>
                                                                 <span class="badge bg-secondary-subtle text-secondary fw-bold small">@item.ProductCode</span>
                                                                 <div class="fw-bold text-dark mt-1">@item.ProductTitle</div>

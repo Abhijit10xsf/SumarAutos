@@ -164,7 +164,7 @@
                     foreach (var item in cartSummary.Items)
                     {
                         <div class="cart-item" data-cart-product-id="@item.ProductId">
-                            <img src="@item.Product.Image" alt="@item.Product.Title">
+                            <img src="@Url.Content(item.Product.Image)" alt="@item.Product.Title">
                             <div>
                                 <div class="cart-item-title">@item.Product.Code - @item.Product.Title</div>
                                 <div class="cart-item-meta">@item.Quantity × AED @item.Product.Price.ToString("F2")</div>
@@ -214,6 +214,15 @@
     <script src="~/Scripts/jquery-3.7.0.min.js"></script>
     <script src="~/Content/assets/vendor/bootstrap.bundle.min.js"></script>
     <script>
+        function resolveUrl(url) {
+            if (!url) return '';
+            if (url.indexOf('http://') === 0 || url.indexOf('https://') === 0 || url.indexOf('data:') === 0) return url;
+            var base = '@Url.Content("~/")';
+            if (url.indexOf('~/') === 0) return base + url.substring(2);
+            if (url.indexOf('/') === 0) return base + url.substring(1);
+            return base + url;
+        }
+
         function formatMoney(value) {
             return 'AED ' + Number(value || 0).toFixed(2);
         }
@@ -243,11 +252,16 @@
             } else {
                 var html = '';
                 $.each(cart.Items, function (idx, item) {
+                    var imgSrc = item.Product ? resolveUrl(item.Product.Image) : '';
+                    var title = item.Product ? item.Product.Title : '';
+                    var code = item.Product ? item.Product.Code : '';
+                    var price = item.Product ? item.Product.Price : 0;
+
                     html += '<div class="cart-item" data-cart-product-id="' + item.ProductId + '">' +
-                        '<img src="' + item.Product.Image + '" alt="' + item.Product.Title + '">' +
+                        '<img src="' + imgSrc + '" alt="' + title + '">' +
                         '<div>' +
-                        '<div class="cart-item-title">' + item.Product.Code + ' - ' + item.Product.Title + '</div>' +
-                        '<div class="cart-item-meta">' + item.Quantity + ' × ' + formatMoney(item.Product.Price) + '</div>' +
+                        '<div class="cart-item-title">' + code + ' - ' + title + '</div>' +
+                        '<div class="cart-item-meta">' + item.Quantity + ' × ' + formatMoney(price) + '</div>' +
                         '<strong class="small">' + formatMoney(item.ItemTotal) + '</strong>' +
                         '</div>' +
                         '<button class="cart-remove" onclick="removeGlobalCartItem(' + item.ProductId + ')" aria-label="Remove item"><i class="bi bi-trash"></i></button>' +

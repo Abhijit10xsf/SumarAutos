@@ -194,7 +194,7 @@
                          data-brand="@product.Brand"
                          data-category="@product.Category"
                          data-price="@product.Price"
-                         data-image="@product.Image"
+                         data-image="@Url.Content(product.Image)"
                          data-moq="@product.Moq"
                          data-sharjah="@product.SharjahStock"
                          data-jebel="@product.JebelStock"
@@ -207,7 +207,7 @@
                                     <span class="offer-badge badge text-bg-danger">Special offer</span>
                                 }
                                 <button class="wishlist-btn" type="button" aria-label="Add to favorites"><i class="bi bi-heart"></i></button>
-                                <img class="product-image" src="@product.Image" alt="@product.Title">
+                                <img class="product-image" src="@Url.Content(product.Image)" alt="@product.Title">
                             </div>
                             <div class="product-body">
                                 <div class="product-main">
@@ -328,7 +328,7 @@
             '<div class="product-image-wrap">' +
             (p.offer ? '<span class="offer-badge badge text-bg-danger">Special offer</span>' : '') +
             '<button class="wishlist-btn" type="button" aria-label="Add to favorites"><i class="bi bi-heart"></i></button>' +
-            '<img class="product-image" src="' + p.image + '" alt="' + p.title + '">' +
+            '<img class="product-image" src="' + resolveUrl(p.image) + '" alt="' + p.title + '">' +
             '</div>' +
             '<div class="product-body">' +
             '<div class="product-main">' +
