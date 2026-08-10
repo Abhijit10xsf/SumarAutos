@@ -24,8 +24,11 @@
             </div>
 
             <div class="d-flex gap-3 justify-content-center">
-                <a href="@Url.Action("Index", "Home")" class="btn btn-danger btn-lg px-4 fw-bold rounded-3">
-                    <i class="bi bi-grid me-2"></i> Back to Catalog
+                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-lg px-4 fw-bold rounded-3">
+                    <i class="bi bi-grid me-2"></i> Catalog
+                </a>
+                <a href="@Url.Action("Index", "Order")" class="btn btn-danger btn-lg px-4 fw-bold rounded-3">
+                    <i class="bi bi-receipt me-2"></i> View Orders
                 </a>
             </div>
         </div>
@@ -33,7 +36,8 @@
 </main>
 
 @section Scripts {
-    <script>$(document).ready(function () {
-        clearLocalCart();
-    });</script>
+    <script>
+    $(document).ready(function () {
+            clearLocalCart();
+        });</script>
 }

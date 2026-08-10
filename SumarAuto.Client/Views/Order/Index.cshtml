@@ -1,0 +1,288 @@
+@model IEnumerable<SumarAuto.Data.Entities.Order>
+@{
+    ViewBag.Title = "Previous Orders | TradeParts Wholesale";
+    ViewBag.CurrentNav = "Orders";
+    var currentUser = ViewBag.CurrentUser as SumarAuto.Data.Entities.User ?? new SumarAuto.Data.Entities.User { Username = "B2B Customer" };
+    var ordersList = Model != null ? Model.ToList() : new List<SumarAuto.Data.Entities.Order>();
+}
+
+<section class="search-hero py-4">
+    <div class="container-fluid px-xl-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-danger">Catalog</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Previous Orders</li>
+                    </ol>
+                </nav>
+                <div class="d-flex align-items-center gap-3">
+                    <h1 class="h3 mb-0 fw-bold">Previous Purchase Orders</h1>
+                    <span class="badge bg-danger text-white rounded-pill px-3 py-2 fs-6">@ordersList.Count Orders Found</span>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <div class="credit-card-mini" style="min-width: 240px;">
+                    <div>
+                        <small>Account ID: <strong>@currentUser.AccountId</strong></small>
+                        <div class="h6 mb-0 text-white-50">@currentUser.CompanyName</div>
+                    </div>
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-light rounded-3 fw-bold px-3">
+                    <i class="bi bi-grid me-1"></i> New Order
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<main class="container-fluid px-xl-4 py-4">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm rounded-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Quick Stats Bar -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block">Total Previous Orders</span>
+                        <span class="h4 fw-bold text-dark mb-0">@ordersList.Count</span>
+                    </div>
+                    <div class="bg-danger-subtle text-danger rounded-3 p-3">
+                        <i class="bi bi-receipt fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block">Active / Processing</span>
+                        <span class="h4 fw-bold text-warning mb-0">@ordersList.Count(o => o.OrderStatus == "Processing" || o.OrderStatus == "Pending")</span>
+                    </div>
+                    <div class="bg-warning-subtle text-warning rounded-3 p-3">
+                        <i class="bi bi-hourglass-split fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block">Completed / Delivered</span>
+                        <span class="h4 fw-bold text-success mb-0">@ordersList.Count(o => o.OrderStatus == "Delivered" || o.OrderStatus == "Completed")</span>
+                    </div>
+                    <div class="bg-success-subtle text-success rounded-3 p-3">
+                        <i class="bi bi-check2-circle fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block">Total Purchase Volume</span>
+                        <span class="h4 fw-bold text-danger mb-0">AED @ordersList.Sum(o => o.GrandTotal).ToString("N2")</span>
+                    </div>
+                    <div class="bg-danger text-white rounded-3 p-3">
+                        <i class="bi bi-currency-dollar fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!ordersList.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center my-4">
+            <div class="card-body">
+                <i class="bi bi-receipt-cutoff display-1 text-muted mb-3 d-block"></i>
+                <h2 class="h4 fw-bold">No previous orders found</h2>
+                <p class="text-muted max-w-md mx-auto mb-4">You have not placed any wholesale spare parts orders yet. Explore our catalog to place your first order.</p>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-danger btn-lg px-4 fw-bold rounded-3">
+                    <i class="bi bi-grid me-2"></i> Browse Wholesale Catalog
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h5 mb-0 fw-bold text-dark"><i class="bi bi-clock-history text-danger me-2"></i> Order History (@ordersList.Count)</h2>
+            <div class="small text-muted">
+                Showing <strong>@Math.Min(2, ordersList.Count)</strong> default order(s) for <strong>@currentUser.CompanyName</strong>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column gap-4">
+            @for (int index = 0; index < ordersList.Count; index++)
+            {
+                var order = ordersList[index];
+                var statusClass = order.OrderStatus == "Delivered" ? "bg-success" : (order.OrderStatus == "Processing" ? "bg-warning text-dark" : "bg-primary");
+                var isDefaultOrder = index < 2;
+
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden order-card">
+                    <!-- Order Header Banner -->
+                    <div class="card-header bg-white p-3 p-md-4 border-bottom">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-4 col-sm-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-danger-subtle text-danger fw-bold fs-6 px-3 py-2 rounded-3">
+                                        <i class="bi bi-hash"></i>@order.OrderNumber
+                                    </span>
+                                    <span class="badge @statusClass px-3 py-2 rounded-pill fw-semibold">
+                                        <i class="bi bi-info-circle me-1"></i>@order.OrderStatus
+                                    </span>
+                                </div>
+                                <div class="small text-muted mt-2">
+                                    <i class="bi bi-calendar-event me-1"></i> Placed on <strong>@order.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 col-sm-6 text-md-center">
+                                <div class="small text-muted">Fulfillment / Payment Terms</div>
+                                <div class="fw-semibold text-dark text-truncate">
+                                    <i class="bi bi-truck me-1 text-primary"></i> @(string.IsNullOrEmpty(order.FulfillmentMethod) ? "Standard Delivery" : order.FulfillmentMethod)
+                                </div>
+                                <div class="small text-muted text-truncate">
+                                    <i class="bi bi-credit-card me-1 text-success"></i> @(string.IsNullOrEmpty(order.PaymentMethod) ? "Wholesale Credit Account" : order.PaymentMethod)
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 col-12 text-md-end">
+                                <div class="small text-muted">Grand Total (incl. 5% VAT)</div>
+                                <div class="h4 fw-bold text-danger mb-2">AED @order.GrandTotal.ToString("N2")</div>
+                                <div class="d-flex gap-2 justify-content-md-end">
+                                    @using (Html.BeginForm("Reorder", "Order", FormMethod.Post, new { @class = "d-inline" }))
+                                    {
+                                        <input type="hidden" name="orderId" value="@order.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm fw-bold rounded-3 px-3">
+                                            <i class="bi bi-arrow-repeat me-1"></i> Reorder All Items
+                                        </button>
+                                    }
+                                    <button class="btn btn-outline-secondary btn-sm rounded-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#orderCollapse_@order.Id" aria-expanded="true" aria-controls="orderCollapse_@order.Id">
+                                        <i class="bi bi-list-task me-1"></i> Toggle Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible Order Details Body -->
+                    <div class="collapse show" id="orderCollapse_@order.Id">
+                        <div class="card-body p-0">
+                            @if (!string.IsNullOrEmpty(order.Notes))
+                            {
+                                <div class="bg-light px-4 py-2 border-bottom small text-muted">
+                                    <i class="bi bi-sticky me-1 text-warning"></i> <strong>Order Notes:</strong> @order.Notes
+                                </div>
+                            }
+
+                            <!-- Itemized Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" class="ps-4">Product Ref & Title</th>
+                                            <th scope="col" class="text-center">Unit Price</th>
+                                            <th scope="col" class="text-center">Quantity</th>
+                                            <th scope="col" class="text-end pe-4">Line Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (order.Details != null && order.Details.Any())
+                                        {
+                                            foreach (var item in order.Details)
+                                            {
+                                                var imgUrl = "/Content/assets/img/brake-pad.svg";
+                                                var codeLower = (item.ProductCode ?? "").ToLower();
+                                                var titleLower = (item.ProductTitle ?? "").ToLower();
+
+                                                if (codeLower.Contains("of") || titleLower.Contains("oil") || titleLower.Contains("filter") || codeLower.Contains("af"))
+                                                {
+                                                    imgUrl = "/Content/assets/img/air-filter.svg";
+                                                }
+                                                else if (codeLower.Contains("spk") || titleLower.Contains("spark") || titleLower.Contains("plug"))
+                                                {
+                                                    imgUrl = "/Content/assets/img/spark-plug.svg";
+                                                }
+                                                else if (codeLower.Contains("cb") || titleLower.Contains("battery"))
+                                                {
+                                                    imgUrl = "/Content/assets/img/bearing.svg";
+                                                }
+                                                else if (titleLower.Contains("belt"))
+                                                {
+                                                    imgUrl = "/Content/assets/img/drive-belt.svg";
+                                                }
+                                                else if (titleLower.Contains("seal") || titleLower.Contains("gasket"))
+                                                {
+                                                    imgUrl = "/Content/assets/img/seal-ring.svg";
+                                                }
+
+                                                <tr>
+                                                    <td class="ps-4 py-3">
+                                                        <div class="d-flex align-items-center gap-3">
+                                                            <img src="@imgUrl" alt="@item.ProductTitle" class="rounded-3 border p-1" style="width: 52px; height: 52px; object-fit: contain; background: #f8f9fa;">
+                                                            <div>
+                                                                <span class="badge bg-secondary-subtle text-secondary fw-bold small">@item.ProductCode</span>
+                                                                <div class="fw-bold text-dark mt-1">@item.ProductTitle</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center fw-semibold text-dark">AED @item.UnitPrice.ToString("F2")</td>
+                                                    <td class="text-center">
+                                                        <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-bold">@item.Quantity Units</span>
+                                                    </td>
+                                                    <td class="text-end pe-4 fw-bold text-dark">AED @item.LineTotal.ToString("F2")</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="4" class="text-center py-3 text-muted">No line item details found for this order.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Financial Summary Footer -->
+                        <div class="card-footer bg-light p-3 px-md-4 border-top">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                                <div class="small text-muted d-flex align-items-center gap-3">
+                                    <span><i class="bi bi-building me-1 text-primary"></i> TradeParts B2B Portal</span>
+                                    <span><i class="bi bi-shield-check me-1 text-success"></i> Genuine OEM Guaranteed</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-4">
+                                    <div class="text-end">
+                                        <small class="text-muted d-block">Subtotal: <strong>AED @order.Subtotal.ToString("N2")</strong></small>
+                                        <small class="text-muted d-block">VAT (5%): <strong>AED @order.VatAmount.ToString("N2")</strong></small>
+                                    </div>
+                                    <div class="border-start ps-3 text-end">
+                                        <small class="text-muted d-block">Grand Total</small>
+                                        <strong class="h5 fw-bold text-danger mb-0">AED @order.GrandTotal.ToString("N2")</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</main>
